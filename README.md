@@ -10,7 +10,7 @@ npm install @namehash/ens-utils
 
 ### Currency
 
-#### `parseStringToCurrency(currency: string)`
+#### `parseStringToCurrency(str: string)`
 
 ```ts
 import { parseStringToCurrency } from "@namehash/ens-utils/currency";
