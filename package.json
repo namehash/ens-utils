@@ -21,6 +21,23 @@
     "semantic-release": "semantic-release"
   },
   "type": "module",
+  "exports": {
+    "./currency": {
+      "import": "./dist/currency.js",
+      "require": "./dist/currency.cjs",
+      "types": "./dist/currency.d.ts"
+    },
+    "./number": {
+      "import": "./dist/number.js",
+      "require": "./dist/number.cjs",
+      "types": "./dist/number.d.ts"
+    },
+    "./time": {
+      "import": "./dist/time.js",
+      "require": "./dist/time.cjs",
+      "types": "./dist/time.d.ts"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
