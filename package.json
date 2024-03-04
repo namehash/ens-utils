@@ -28,7 +28,6 @@
     "decimal.js": "10.4.3"
   },
   "devDependencies": {
-    "@colbyfayock/semantic-release-pnpm": "1.2.2",
     "semantic-release": "23.0.2",
     "tsup": "8.0.2",
     "typescript": "5.3.3",
