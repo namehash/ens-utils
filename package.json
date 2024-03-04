@@ -25,6 +25,7 @@
     "access": "public"
   },
   "dependencies": {
+    "date-fns": "3.3.1",
     "decimal.js": "10.4.3"
   },
   "devDependencies": {
