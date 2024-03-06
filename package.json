@@ -11,7 +11,8 @@
     "ens-utils"
   ],
   "contributors": [
-    "Jamie Barton <jamie@notrab.dev>"
+    "Jamie Barton <jamie@notrab.dev>",
+    "Franco Aguzzi <frankind.eth@gmail.com>"
   ],
   "scripts": {
     "build": "tsup",
@@ -36,6 +37,11 @@
       "import": "./dist/time.js",
       "require": "./dist/time.cjs",
       "types": "./dist/time.d.ts"
+    },
+    "./price": {
+      "import": "./dist/price.js",
+      "require": "./dist/price.cjs",
+      "types": "./dist/price.d.ts"
     }
   },
   "publishConfig": {

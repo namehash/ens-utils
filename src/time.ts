@@ -40,6 +40,8 @@ export const ONE_WEEK_IN_SECONDS = 7n * ONE_DAY_IN_SECONDS;
 
 export const GRACE_PERIOD = 90n * ONE_DAY_IN_SECONDS;
 
+export const TEMPORARY_PREMIUM_DAYS = 21n;
+
 /**
  * Converts milliseconds to seconds.
  * @param ms: bigint - The milliseconds to convert.
