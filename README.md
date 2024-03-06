@@ -21,3 +21,5 @@ const formattedPrice = parseStringToCurrency("ETH");
 ### Number
 
 ### Time
+
+### Price
