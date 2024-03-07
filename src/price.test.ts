@@ -1,3 +1,5 @@
+import { describe, it, expect } from "vitest";
+
 import {
   PREMIUM_OFFSET,
   PREMIUM_START_PRICE,
@@ -9,7 +11,6 @@ import {
 } from "./price";
 import { Currency, PriceCurrencyFormat } from "./currency";
 import { GRACE_PERIOD, ONE_DAY_IN_SECONDS } from "./time";
-import { describe, it, expect } from "vitest";
 
 enum CurrencyTestScenario {
   "UNDERFLOW",
