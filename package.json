@@ -26,22 +26,26 @@
     "./currency": {
       "import": "./dist/currency.js",
       "require": "./dist/currency.cjs",
-      "types": "./dist/currency.d.ts"
+      "types": "./dist/currency.d.ts",
+      "default": "./dist/currency.js"
     },
     "./number": {
       "import": "./dist/number.js",
       "require": "./dist/number.cjs",
-      "types": "./dist/number.d.ts"
+      "types": "./dist/number.d.ts",
+      "default": "./dist/number.js"
     },
     "./time": {
       "import": "./dist/time.js",
       "require": "./dist/time.cjs",
-      "types": "./dist/time.d.ts"
+      "types": "./dist/time.d.ts",
+      "default": "./dist/time.js"
     },
     "./price": {
       "import": "./dist/price.js",
       "require": "./dist/price.cjs",
-      "types": "./dist/price.d.ts"
+      "types": "./dist/price.d.ts",
+      "default": "./dist/price.js"
     }
   },
   "publishConfig": {
