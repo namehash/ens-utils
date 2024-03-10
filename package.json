@@ -24,10 +24,15 @@
   "type": "module",
   "exports": {
     "./currency": {
-      "import": "./dist/currency.js",
-      "require": "./dist/currency.cjs",
       "types": "./dist/currency.d.ts",
-      "default": "./dist/currency.js"
+      "import": {
+        "node": "./dist/currency.js",
+        "default": "./dist/currency.js"
+      },
+      "require": {
+        "node": "./dist/currency.cjs",
+        "default": "./dist/currency.cjs"
+      }
     },
     "./number": {
       "import": "./dist/number.js",
