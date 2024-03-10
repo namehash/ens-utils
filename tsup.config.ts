@@ -1,9 +1,9 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/**/**.ts", "!src/**/*.test.ts"],
+  entry: ["src/index.ts"],
   splitting: true,
-  sourcemap: true,
+  sourcemap: false,
   clean: true,
   dts: true,
   treeshake: true,
