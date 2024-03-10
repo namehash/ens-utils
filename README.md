@@ -13,7 +13,7 @@ npm install @namehash/ens-utils
 #### `parseStringToCurrency(str: string): Currency`
 
 ```ts
-import { parseStringToCurrency } from "@namehash/ens-utils/currency";
+import { parseStringToCurrency } from "@namehash/ens-utils";
 
 const formattedPrice = parseStringToCurrency("ETH");
 
@@ -29,12 +29,12 @@ const formattedPrice = parseStringToCurrency("ETH");
 #### `priceAsNumber(price: Price): number`
 
 ```ts
-import { priceAsNumber } from "@namehash/ens-utils/price";
+import { priceAsNumber } from "@namehash/ens-utils";
 
 const tenUSDC = {
   value: 100000n,
-  currency: Currency.Usdc
-}
+  currency: Currency.Usdc,
+};
 
 const tenUsdcAsNumber = priceAsNumber(tenUSDC);
 
@@ -44,7 +44,7 @@ const tenUsdcAsNumber = priceAsNumber(tenUSDC);
 #### `numberAsPrice(number: number, currency: Currency): Price`
 
 ```ts
-import { numberAsPrice } from "@namehash/ens-utils/price";
+import { numberAsPrice } from "@namehash/ens-utils";
 
 const fromNumberTenToEthValue = numberAsPrice(10, Currency.Eth);
 
@@ -57,21 +57,18 @@ const fromNumberTenToEthValue = numberAsPrice(10, Currency.Eth);
 #### `addPrices = (prices: Array<Price>): Price`
 
 ```ts
-import { addPrices } from "@namehash/ens-utils/price";
+import { addPrices } from "@namehash/ens-utils";
 
 const networkFee: Price = {
   value: X,
-  currency: Currency.Eth
-}
+  currency: Currency.Eth,
+};
 const ethDomainPrice: Price = {
   value: Y,
-  currency: Currency.Eth
-}
+  currency: Currency.Eth,
+};
 
-const totalCost = addPrices([
-  networkFee,
-  ethDomainPrice,
-]);
+const totalCost = addPrices([networkFee, ethDomainPrice]);
 
 // totalCost equals {
 //   value: X + Y,
@@ -82,21 +79,18 @@ const totalCost = addPrices([
 #### `subtractPrices = (price1: Price, price2: Price): Price`
 
 ```ts
-import { subtractPrices } from "@namehash/ens-utils/price";
+import { subtractPrices } from "@namehash/ens-utils";
 
 const ethDomainPrice: Price = {
   value: X,
-  currency: Currency.Eth
-}
+  currency: Currency.Eth,
+};
 const ethDomainPricePremium: Price = {
   value: Y,
-  currency: Currency.Eth
-}
+  currency: Currency.Eth,
+};
 
-const totalCost = subtractPrices(
-  ethDomainPrice,
-  ethDomainPricePremium,
-);
+const totalCost = subtractPrices(ethDomainPrice, ethDomainPricePremium);
 
 // totalCost equals {
 //   value: X - Y,
@@ -107,18 +101,15 @@ const totalCost = subtractPrices(
 #### `multiplyPriceByNumber = (price1: Price, price2: number): Price`
 
 ```ts
-import { multiplyPriceByNumber } from "@namehash/ens-utils/price";
+import { multiplyPriceByNumber } from "@namehash/ens-utils";
 
 const ethDomainPrice: Price = {
   value: X,
-  currency: Currency.Eth
-}
-const multiplier = 2
+  currency: Currency.Eth,
+};
+const multiplier = 2;
 
-const totalCost = multiplyPriceByNumber(
-  ethDomainPrice,
-  multiplier,
-);
+const totalCost = multiplyPriceByNumber(ethDomainPrice, multiplier);
 
 // totalCost equals {
 //   value: X * 2,
@@ -129,29 +120,29 @@ const totalCost = multiplyPriceByNumber(
 #### `formattedPrice = ({ price, withPrefix = false, withSufix = false }: { price: Price; withPrefix?: boolean; withSufix?: boolean }): string`
 
 ```ts
-import { formattedPrice } from "@namehash/ens-utils/price";
+import { formattedPrice } from "@namehash/ens-utils";
 
-const fiveDollarsInEth = 5000000000000000000n
+const fiveDollarsInEth = 5000000000000000000n;
 
 const a = formattedPrice({
   price: { currency: Currency.Eth, value: fiveDollarsInEth },
-})
+});
 
 const b = formattedPrice({
   price: { currency: Currency.Eth, value: fiveDollarsInEth },
-  withSufix: true
-})
+  withSufix: true,
+});
 
 const c = formattedPrice({
   price: { currency: Currency.Eth, value: fiveDollarsInEth },
-  withPrefix: true
-})
+  withPrefix: true,
+});
 
 const d = formattedPrice({
   price: { currency: Currency.Eth, value: fiveDollarsInEth },
   withPrefix: true,
-  withSufix: true
-})
+  withSufix: true,
+});
 
 // a equals 5.000
 // b equals 5.000 ETH
@@ -162,7 +153,7 @@ const d = formattedPrice({
 #### `approxScalePrice = (price: Price, scaleFactor: number, digitsOfPrecision = 20n): Price`
 
 ```ts
-import { approxScalePrice } from "@namehash/ens-utils/price";
+import { approxScalePrice } from "@namehash/ens-utils";
 
 [...]
 
@@ -174,22 +165,22 @@ const decayedPrice = approxScalePrice(PREMIUM_START_PRICE, decayFactor);
 #### `convertCurrencyWithRates = (price: Price, scaleFactor: number, digitsOfPrecision = 20n): Price`
 
 ```ts
-import { convertCurrencyWithRates } from "@namehash/ens-utils/price";
+import { convertCurrencyWithRates } from "@namehash/ens-utils";
 
 const fromUsd = {
   value: 500n,
-  currency: Currency.Usd
-}
+  currency: Currency.Usd,
+};
 
 const exchangeRatesRecord = {
   [Currency.Eth]: 2277.56570676,
-  [Currency.Usd]: 1
-}
+  [Currency.Usd]: 1,
+};
 
 const fromUsdToEth = convertCurrencyWithRates(
   fromUsd,
   Currency.Eth,
-  exchangeRatesRecord,
+  exchangeRatesRecord
 );
 
 // fromUsdToEth equals the Eth amount of $5 based on the provided currencies exchange rates
@@ -226,15 +217,15 @@ const PREMIUM_DECAY = 0.5;
 #### `PREMIUM_OFFSET: Price`
 
 Goal:
- The temporary premium should drop to $0.00 after exactly `PREMIUM_DAYS` days have passed.
+The temporary premium should drop to $0.00 after exactly `PREMIUM_DAYS` days have passed.
 
 Challenge:
- If we decay `PREMIUM_START` by a rate of `PREMIUM_DECAY` each day over the course of
- `PREMIUM_DAYS` days we don't get $0.00 USD. Instead, we get this `PREMIUM_OFFSET` value
- ($47.68 USD).
+If we decay `PREMIUM_START` by a rate of `PREMIUM_DECAY` each day over the course of
+`PREMIUM_DAYS` days we don't get $0.00 USD. Instead, we get this `PREMIUM_OFFSET` value
+($47.68 USD).
 
- Solution:
-  Subtract this value from the decayed temporary premium to get the actual temporary premium.
+Solution:
+Subtract this value from the decayed temporary premium to get the actual temporary premium.
 
 ```ts
 const PREMIUM_OFFSET = approxScalePrice(
