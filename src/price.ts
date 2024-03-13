@@ -1,10 +1,5 @@
 import { Currency, PriceCurrencyFormat } from "./currency";
 import { approxScaleBigInt } from "./number";
-import {
-  GRACE_PERIOD,
-  ONE_DAY_IN_SECONDS,
-  TEMPORARY_PREMIUM_DAYS,
-} from "./time";
 
 export type Price = {
   value: bigint;
@@ -184,67 +179,3 @@ export const convertCurrencyWithRates = (
 
   return exchangedValuePrice;
 };
-
-export function temporaryPremiumPriceAtTimestamp(
-  atTimestamp: bigint,
-  expirationTimestamp: bigint
-): Price {
-  const releasedTimestamp = expirationTimestamp + GRACE_PERIOD;
-  const secondsSinceRelease = atTimestamp - releasedTimestamp;
-  if (secondsSinceRelease < 0) {
-    // if as of the moment of `atTimestamp` a name hasn't expired yet then there is no temporaryPremium
-    return {
-      value: 0n,
-      currency: Currency.Usd,
-    };
-  }
-
-  const fractionalDaysSinceRelease =
-    Number(secondsSinceRelease) / Number(ONE_DAY_IN_SECONDS);
-
-  const decayFactor = PREMIUM_DECAY ** fractionalDaysSinceRelease;
-
-  const decayedPrice = approxScalePrice(PREMIUM_START_PRICE, decayFactor);
-  const offsetDecayedPrice = subtractPrices(decayedPrice, PREMIUM_OFFSET);
-
-  // the temporary premium can never be less than $0.00
-  if (offsetDecayedPrice.value < 0n) {
-    return {
-      value: 0n,
-      currency: Currency.Usd,
-    };
-  }
-
-  return offsetDecayedPrice;
-}
-
-/**
- * At the moment a .eth name expires, this recently released temporary premium is added to its price.
- * NOTE: The actual recently released temporary premium added subtracts `PREMIUM_OFFSET`.
- */
-export const PREMIUM_START_PRICE: Price = {
-  value: 10000000000n, // $100,000,000.00 (100 million USD)
-  currency: Currency.Usd,
-};
-
-/**
- * The recently released temporary premium drops exponentially by 50% each day.
- */
-export const PREMIUM_DECAY = 0.5;
-
-/**
- * Goal:
- *  The temporary premium should drop to $0.00 after exactly `PREMIUM_DAYS` days have passed.
- *
- * Challenge:
- *  If we decay `PREMIUM_START` by a rate of `PREMIUM_DECAY` each day over the course of
- *  `PREMIUM_DAYS` days we don't get $0.00 USD. Instead, we get this `PREMIUM_OFFSET` value
- *  ($47.68 USD).
- *
- * Solution:
- *  Subtract this value from the decayed temporary premium to get the actual temporary premium.
- */
-export const PREMIUM_OFFSET = approxScalePrice(
-  PREMIUM_START_PRICE,
-  PREMIUM_DECAY ** Number(TEMPORARY_PREMIUM_DAYS)
-);
