@@ -1,16 +1,7 @@
 import { describe, it, expect } from "vitest";
 
-import {
-  PREMIUM_OFFSET,
-  PREMIUM_START_PRICE,
-  Price,
-  convertCurrencyWithRates,
-  formattedPrice,
-  subtractPrices,
-  temporaryPremiumPriceAtTimestamp,
-} from "./price";
+import { Price, convertCurrencyWithRates, formattedPrice } from "./price";
 import { Currency, PriceCurrencyFormat } from "./currency";
-import { GRACE_PERIOD, ONE_DAY_IN_SECONDS } from "./time";
 
 enum CurrencyTestScenario {
   "UNDERFLOW",
@@ -528,90 +519,5 @@ describe("Currencies overflow values displaying", () => {
     console.log("USDC Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
-  });
-});
-
-describe("Should correctly calculate premium prices for:", () => {
-  it("A domain that was released to the market 20 days ago", () => {
-    const hardcodedNow = 1707054623n; // 2024-02-04 13:50:23 UTC
-    const exampleExpirationTime = hardcodedNow - ONE_DAY_IN_SECONDS * 20n; // 20 days before hardcodedNow
-
-    const result = temporaryPremiumPriceAtTimestamp(
-      hardcodedNow,
-      exampleExpirationTime - GRACE_PERIOD
-    );
-
-    expect(result).toStrictEqual({
-      value: 4768n,
-      currency: Currency.Usd,
-    });
-  });
-
-  it("A domain that was released to the market 20 days and a half ago", () => {
-    const hardcodedNow = 1707054623n; // 2024-02-04 13:50:23 UTC
-    const exampleExpirationTime =
-      hardcodedNow - (ONE_DAY_IN_SECONDS * 41n) / 2n; // 20.5 days before hardcodedNow
-
-    const result = temporaryPremiumPriceAtTimestamp(
-      hardcodedNow,
-      exampleExpirationTime - GRACE_PERIOD
-    );
-
-    expect(result).toStrictEqual({
-      value: 1975n,
-      currency: Currency.Usd,
-    });
-  });
-
-  it("A domain that was released to the market 1 day and a half ago", () => {
-    const hardcodedNow = 1707054623n; // 2024-02-04 13:50:23 UTC
-    const expirationTime = hardcodedNow - (ONE_DAY_IN_SECONDS * 3n) / 2n; // 1.5 days before hardcodedNow
-    console.log("exactly 1.5 days ago - expirationTime: ", expirationTime);
-    const result = temporaryPremiumPriceAtTimestamp(
-      hardcodedNow,
-      expirationTime - GRACE_PERIOD
-    );
-
-    expect(result).toStrictEqual({
-      value: 3535529137n,
-      currency: Currency.Usd,
-    });
-  });
-
-  it("A domain that was released to the market 20 days, 23 hours and 59 minutes ago", () => {
-    const hardcodedNow = 1707054623n; // 2024-02-04 13:50:23 UTC
-    const TWENTY_DAYS_TWENTY_THREE_HOURS_TWENTY_NINE_MINUTES_IN_SECONDS =
-      1814340n;
-    const expirationTime =
-      hardcodedNow -
-      TWENTY_DAYS_TWENTY_THREE_HOURS_TWENTY_NINE_MINUTES_IN_SECONDS; // 1 minute from not having a premium price
-
-    const result = temporaryPremiumPriceAtTimestamp(
-      hardcodedNow,
-      expirationTime - GRACE_PERIOD
-    );
-
-    expect(result).toStrictEqual({
-      value: 2n,
-      currency: Currency.Usd,
-    });
-  });
-
-  it("A domain that was just now released to the market", () => {
-    const hardcodedNow = 1707054623n;
-    const expirationTime = hardcodedNow; // Exactly at expiration
-    console.log(
-      "exactly at expiration - exampleExpirationTime: ",
-      expirationTime
-    );
-    const result = temporaryPremiumPriceAtTimestamp(
-      hardcodedNow,
-      expirationTime - GRACE_PERIOD
-    );
-
-    // Expect full premium value (which is not $100M, but, $100M - PREMIUM_OFFSET instead)
-    expect(result).toStrictEqual(
-      subtractPrices(PREMIUM_START_PRICE, PREMIUM_OFFSET)
-    );
   });
 });

@@ -8,39 +8,12 @@ import {
 
 import { bigIntToNumber } from "./number";
 
-export enum PrimaryRegistrationStatus {
-  Active = "Active",
-  Expired = "Expired",
-  NeverRegistered = "NeverRegistered",
-}
-
-export enum SecondaryRegistrationStatus {
-  ExpiringSoon = "ExpiringSoon",
-  FullyReleased = "FullyReleased",
-  GracePeriod = "GracePeriod",
-  RecentlyReleased = "RecentlyReleased",
-}
-
-export type Registration = {
-  // Below timestamps are counted in seconds
-  registrationTimestamp: bigint | null;
-  expirationTimestamp: bigint | null;
-  expiryTimestamp: bigint | null;
-
-  primaryStatus: PrimaryRegistrationStatus;
-  secondaryStatus: SecondaryRegistrationStatus | null;
-};
-
 export const SECONDS_PER_YEAR = 31556952;
 
 export const ONE_MINUTE_IN_SECONDS = 60n;
 export const ONE_HOUR_IN_SECONDS = 60n * ONE_MINUTE_IN_SECONDS;
 export const ONE_DAY_IN_SECONDS = 24n * ONE_HOUR_IN_SECONDS;
 export const ONE_WEEK_IN_SECONDS = 7n * ONE_DAY_IN_SECONDS;
-
-export const GRACE_PERIOD = 90n * ONE_DAY_IN_SECONDS;
-
-export const TEMPORARY_PREMIUM_DAYS = 21n;
 
 /**
  * Converts milliseconds to seconds.
@@ -161,76 +134,3 @@ export function prettyTimestampDiffFromNow(timestamp: bigint): string {
     return "less than an hour";
   }
 }
-
-/**
- * Returns the expiration timestamp of a domain
- * @param registration Registration object from domain
- * @returns bigint | null
- */
-export function domainExpirationTimestamp(
-  registration: Registration
-): bigint | null {
-  if (registration.expirationTimestamp) {
-    return registration.expirationTimestamp;
-  }
-  return null;
-}
-
-/**
- * Returns the release timestamp of a domain, which is 90 days after expiration when the Grace Period ends
- * @param registration Registration object from domain
- * @returns bigint | null
- */
-export function domainReleaseTimestamp(
-  registration: Registration
-): bigint | null {
-  const expirationTimestamp = domainExpirationTimestamp(registration);
-  if (expirationTimestamp === null) return null;
-
-  const releaseTimestamp = expirationTimestamp + GRACE_PERIOD;
-  return releaseTimestamp;
-}
-
-export enum OfferExpirationStatus {
-  Active,
-  ExpiringSoon,
-  Expired,
-}
-
-/**
- * Evaluates and returns the expiration status of an offer based on its expiry timestamp.
- * @param offerExpiry: bigint - The offer's expiry timestamp.
- * @returns OfferExpirationStatus - The current status of the offer, indicating if it is active, expiring soon, or expired.
- */
-export const getOfferExpirationStatus = (
-  offerExpiry: bigint
-): OfferExpirationStatus => {
-  const nowTime = now();
-
-  const expired = offerExpiry < nowTime;
-
-  if (expired) return OfferExpirationStatus.Expired;
-
-  const expiringSoon = offerExpiry - nowTime < ONE_WEEK_IN_SECONDS;
-
-  if (expiringSoon) return OfferExpirationStatus.ExpiringSoon;
-
-  return OfferExpirationStatus.Active;
-};
-
-/**
- * Evaluates and returns the expiration status of an offer based on its expiry timestamp.
- * @param registrationPeriod: number - The number of years the registration is valid for.
- * @returns renewalDate: Date - The date when the registration will expire.
- */
-export const getRenewalDateAfterRegistration = (
-  registrationPeriod: number
-): Date => {
-  const registrationRenewalDate = new Date();
-
-  registrationRenewalDate.setFullYear(
-    registrationRenewalDate.getFullYear() + registrationPeriod
-  );
-
-  return registrationRenewalDate;
-};
