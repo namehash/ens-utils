@@ -134,3 +134,19 @@ export function prettyTimestampDiffFromNow(timestamp: bigint): string {
     return "less than an hour";
   }
 }
+
+export interface ValidityPeriod {
+  validFrom: bigint;
+  validUntil: bigint;
+}
+
+export const createValidityPeriod = (
+  validFrom: bigint,
+  validUntil: bigint
+): ValidityPeriod => {
+  if (validFrom > validUntil)
+    throw new Error(
+      "Error creating ValidityPeriod. validFrom must be less than validUntil"
+    );
+  return { validFrom, validUntil };
+};

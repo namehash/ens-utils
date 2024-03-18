@@ -1,10 +1,10 @@
 import { Currency, PriceCurrencyFormat } from "./currency";
 import { approxScaleBigInt } from "./number";
 
-export type Price = {
+export interface Price {
   value: bigint;
   currency: Currency;
-};
+}
 
 // An ExchangeRates object maps different currencies to their rate in USD,
 // which is a number value. One example of an ExchangeRates object would be:
