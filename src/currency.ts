@@ -16,7 +16,7 @@ export type SupportedPreferredCurrencies = Currency.Usd | Currency.Eth;
 
 export const DEFAULT_PREFERRED_CURRENCY = Currency.Usd;
 
-export type CurrencyConfig = {
+export interface CurrencyConfig {
   /*
     Left positioned by default, symbol represents:
     - For ETH: Ξ
@@ -51,7 +51,7 @@ export type CurrencyConfig = {
   ExtendedCurrencyNamePlural: string;
   // How one unit of the currency is displayed as a number (e.g. Ether is displayed as 1.000, USD is displayed as 1.00 etc)
   OneUnitOfCurrency: string;
-};
+}
 
 export const PriceCurrencyFormat: Record<Currency, CurrencyConfig> = {
   [Currency.Usd]: {
