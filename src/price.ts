@@ -9,7 +9,7 @@ export interface Price {
 // An ExchangeRates object maps different currencies to their rate in USD,
 // which is a number value. One example of an ExchangeRates object would be:
 // { ETH: 1737.16, DAI: 0.99999703, USDC: 1, WETH: 1737.16, USD: 1 }
-export type ExchangeRates = Record<Currency, number>;
+export interface ExchangeRates extends Partial<Record<Currency, number>> {}
 
 export const priceAsNumber = (price: Price): number => {
   return (
@@ -172,7 +172,15 @@ export const convertCurrencyWithRates = (
   toCurrency: Currency,
   exchangeRates: ExchangeRates
 ): Price => {
-  const rate = exchangeRates[fromPrice.currency] / exchangeRates[toCurrency];
+  if (typeof exchangeRates[toCurrency] === "undefined") {
+    throw new Error(`Exchange rate for currency ${toCurrency} not found`);
+  } else if (typeof exchangeRates[fromPrice.currency] === "undefined") {
+    throw new Error(
+      `Exchange rate for currency ${fromPrice.currency} not found`
+    );
+  }
+
+  const rate = exchangeRates[fromPrice.currency]! / exchangeRates[toCurrency]!;
   const valueAsNumber = priceAsNumber(fromPrice);
   const exchangedValue = valueAsNumber * rate;
   const exchangedValuePrice = numberAsPrice(exchangedValue, toCurrency);
