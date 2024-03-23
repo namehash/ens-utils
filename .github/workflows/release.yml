@@ -23,25 +23,35 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          path: packages/ens-utils
+        if: env.package_changed == 'true'
 
-      - name: Stop release process if no changes were made into ens-utils package
-        if: env.package_changed == 'false'
-        run: break
-        else:
-          - name: Setup pnpm
-            uses: pnpm/action-setup@v3
-            with:
-              version: 8
-          - uses: actions/setup-node@v4
-            with:
-              node-version: "lts/*"
-              cache: "pnpm"
-          - run: pnpm install
-          - run: pnpm build
-          - run: pnpm test
-          - run: pnpm audit signatures
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+        if: env.package_changed == 'true'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+        if: env.package_changed == 'true'
+
+      - name: Install dependencies
+        if: env.package_changed == 'true'
+        run: pnpm install
+
+      - name: Build
+        if: env.package_changed == 'true'
+        run: pnpm build
+
+      - name: Test
+        if: env.package_changed == 'true'
+        run: pnpm test
+
+      - name: Audit
+        if: env.package_changed == 'true'
+        run: pnpm audit signatures
 
       - name: Release
         env:
