@@ -1,0 +1,58 @@
+{
+  "name": "@namehash/ens-utils",
+  "description": "",
+  "version": "0.0.0-development",
+  "license": "MIT",
+  "repository": "namehash/ens-utils",
+  "keywords": [
+    "ens",
+    "ethereum",
+    "namehash",
+    "ens-utils"
+  ],
+  "contributors": [
+    "Jamie Barton <jamie@notrab.dev>",
+    "Franco Aguzzi <frankind.eth@gmail.com>"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch --clean=false",
+    "test": "vitest",
+    "test:watch": "vitest watch",
+    "semantic-release": "semantic-release"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": {
+        "node": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "node": "./dist/index.cjs",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "date-fns": "3.3.1",
+    "decimal.js": "10.4.3"
+  },
+  "devDependencies": {
+    "semantic-release": "23.0.2",
+    "tsup": "8.0.2",
+    "typescript": "5.3.3",
+    "vite": "5.1.4",
+    "vitest": "1.3.1"
+  },
+  "files": [
+    "dist"
+  ]
+}
