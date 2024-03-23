@@ -14,6 +14,17 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Check if changes were made into ens-utils package
+        id: check_changes
+        run: |
+          package_changed=false
+          git diff --diff-filter=d --name-only HEAD HEAD~1 | grep -q "packages/ens-utils" && package_changed=true
+          echo "package_changed=${{ env.package_changed }}" >> $GITHUB_ENV
+        if: env.package_changed == 'false'
+          run: break
+        else:
+          run: cd packages/ens-utils
+          
       - uses: actions/checkout@v2
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -27,8 +38,9 @@ jobs:
       - run: pnpm build
       - run: pnpm test
       - run: pnpm audit signatures
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+          run: npx semantic-release
