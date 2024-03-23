@@ -1,21 +1,3 @@
-# ENS Utils
-Dedicated to promote ENS adoption expansion and facilitate eco-system application to be born, be improved and scaled.
-
-# @namehash/nameparser
-
-## Installation
-
-```bash
-npm install @namehash/nameparser
-```
-
-## Usage
-
-```ts
-import { parseName } from "@namehash/nameparser";
-
-const { inputName, outputName, transformations } = parseName("notrab.eth");
-```
 
 # @namehash/ens-utils
 
