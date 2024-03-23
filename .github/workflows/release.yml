@@ -21,25 +21,27 @@ jobs:
           git diff --diff-filter=d --name-only HEAD HEAD~1 | grep -q "packages/ens-utils" && package_changed=true
           echo "package_changed=${{ env.package_changed }}" >> $GITHUB_ENV
 
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: packages/ens-utils
+
       - name: Stop release process if no changes were made into ens-utils package
         if: env.package_changed == 'false'
         run: break
         else:
-        run: cd packages/ens-utils
-
-      - uses: actions/checkout@v2
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "lts/*"
-          cache: "pnpm"
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm test
-      - run: pnpm audit signatures
+          - name: Setup pnpm
+            uses: pnpm/action-setup@v3
+            with:
+              version: 8
+          - uses: actions/setup-node@v4
+            with:
+              node-version: "lts/*"
+              cache: "pnpm"
+          - run: pnpm install
+          - run: pnpm build
+          - run: pnpm test
+          - run: pnpm audit signatures
 
       - name: Release
         env:
