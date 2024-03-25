@@ -674,3 +674,9 @@ const fromUsdToEth = convertCurrencyWithRates(
 # Contact us
 
 Visit our [website](https://namehashlabs.org/) and get in contact.
+
+# License
+
+Licensed under the MIT License, Copyright © 2023-present [NameHash Labs](https://namehashlabs.org).
+
+See [LICENSE](./LICENSE) for more information.
