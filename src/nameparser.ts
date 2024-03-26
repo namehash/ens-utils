@@ -1,4 +1,3 @@
-import { ens_normalize } from "@adraffy/ens-normalize";
 import {
   ENSName,
   ETH_TLD,
@@ -6,7 +5,8 @@ import {
   buildENSName,
   labelsEqual,
   tryNormalize,
-} from "./ensname";
+} from "./index";
+import { ens_normalize } from "@adraffy/ens-normalize";
 
 /**
  * `NameParserOptions` provides configurations for parsing ENS names from user input.
