@@ -214,6 +214,86 @@ const { inputName, outputName, transformations } = parseName(
 
 This example demonstrates how to use the `parseName` function with the `NameParserOptions` to parse and normalize an ENS name input. The output would be a `ParsedName` object with the original input, the processed ENS name, and the transformations applied.
 
+### `labelhash`
+
+Computes the Keccak-256 hash of a provided label.
+
+**Parameters:**
+
+- `label`: The text label to hash.
+
+**Returns:** Keccak-256 hash of the label as a hexadecimal string.
+
+#### Example
+
+```typescript
+const hashedLabel = labelhash("example");
+console.log(hashedLabel); // Outputs the Keccak-256 hash of "example"
+```
+
+### `isKeccak256Hash`
+
+Validates if a given string is a properly formatted Keccak-256 hash.
+
+**Parameters:**
+
+- `hash`: The hash string to validate.
+
+**Returns:** `true` if the hash is a valid Keccak-256 hash, otherwise `false`.
+
+### `encodeLabelhash`
+
+Encodes a given labelhash into a specific format, denoted by square brackets.
+
+**Parameters:**
+
+- `labelhash`: The labelhash value to encode.
+
+**Returns:** The encoded labelhash.
+
+## `decodeEncodedLabelhash`
+
+Decodes an encoded labelhash, extracting the original labelhash value.
+
+**Parameters:**
+
+- `encodedLabelhash`: The encoded labelhash to decode.
+
+**Returns:** The labelhash value of the encoded labelhash.
+
+## `isEncodedLabelhash`
+
+Checks if a label contains an encoded labelhash.
+
+**Parameters:**
+
+- `label`: The label to evaluate.
+
+**Returns:** `true` if the label contains an encoded labelhash, otherwise `false`.
+
+## `normalizeKeccak256Hash`
+
+Normalizes a Keccak-256 hash to a consistent format, addressing prefix presence and letter casing.
+
+**Parameters:**
+
+- `hash`: The hash to normalize.
+- `withPrefix`: Whether to include the "0x" prefix in the normalized hash.
+
+**Returns:** A normalized Keccak-256 hash.
+
+**Throws:** Error if the hash is not a valid Keccak-256 hash.
+
+## `normalizeEncodedLabelhash`
+
+Normalizes an encoded labelhash to a standard format, ensuring the labelhash component is properly normalized.
+
+**Parameters:**
+
+- `label`: The label containing an encoded labelhash to normalize.
+
+**Returns:** A normalized encoded labelhash.
+
 ## More important functions
 
 ### Label Operations
