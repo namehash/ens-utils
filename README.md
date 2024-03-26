@@ -1,33 +1,4 @@
-# ENS Utils
-Dedicated to promote ENS adoption expansion and facilitate eco-system application to be born, be improved and scaled.
-
-# @namehash/nameparser
-
-## Installation
-
-```bash
-npm install @namehash/nameparser
-```
-
-## Usage
-
-```ts
-import { parseName } from "@namehash/nameparser";
-
-const { inputName, outputName, transformations } = parseName("notrab.eth");
-```
-
 # @namehash/ens-utils
-
-## Table of Contents
-
-- [Install](#install)
-- [Overview](#overview)
-- [Usage](#usage)
-  - [Currency](#currency)
-  - [Number](#number)
-  - [Time](#time)
-  - [Price](#price)
 
 ## Install
 
@@ -39,14 +10,229 @@ npm install @namehash/ens-utils
 
 Dedicated to provide various utility functions specifically tailored for handling currency, numbers, prices, and time, `@namehash/ens-utils` exports functionalities from separate modules, each designed for a specific purpose, detailed below:
 
-| Module     | Description                                                                                                                                                                      |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `currency` | Especially useful in applications dealing with financial transactions, crypto assets, or any domain where currency representation and conversion are crucial.                    |
-| `number`   | Utility functions for converting between different numeric formats (`string`, `Decimal`, `number`, and `bigint`) and for performing approximate scaling of `bigint` values.      |
-| `price`    | This module provides a robust foundation for handling monetary values within a financial application, offering flexibility for currency operations, conversions, and formatting. |
-| `time`     | Includes functions for time manipulation, formatting, and calculation.                                                                                                           |
+| Module       | Description                                                                                                                                                                      |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nameparser` | Offers a way to process and normalize string inputs conform to the expected ENS name format configured.                                                                          |
+| `currency`   | Especially useful in applications dealing with financial transactions, crypto assets, or any domain where currency representation and conversion are crucial.                    |
+| `number`     | Utility functions for converting between different numeric formats (`string`, `Decimal`, `number`, and `bigint`) and for performing approximate scaling of `bigint` values.      |
+| `price`      | This module provides a robust foundation for handling monetary values within a financial application, offering flexibility for currency operations, conversions, and formatting. |
+| `time`       | Includes functions for time manipulation, formatting, and calculation.                                                                                                           |
 
 ## Usage
+
+# Name Parser
+
+ENS names are crucial in the Ethereum ecosystem, serving as human-readable addresses that map to Ethereum addresses. However, user input can be unpredictable and may not always conform to the expected ENS name format. The `Name Parser` module offers a way to process and normalize these inputs into a consistent format, applying transformations such as trimming whitespace, normalizing names, and appending assumed TLDs when necessary, helping user handle labels and name hashes. It utilizes the `@adraffy/ens-normalize` library for normalization purposes.
+
+## Constants
+
+The module defines several constants for use within the ENS ecosystem, such as:
+
+### `LABEL_SEPARATOR`
+
+The character used to separate labels in an ENS name.
+
+```typescript
+export const LABEL_SEPARATOR = ".";
+```
+
+### `ETH_TLD`
+
+The top-level domain for Ethereum names (`eth`).
+
+```typescript
+export const ETH_TLD = "eth";
+```
+
+### `MIN_ETH_REGISTRABLE_LABEL_LENGTH`
+
+The minimum length of a label that can be registered under `.eth`.
+
+```typescript
+export const MIN_ETH_REGISTRABLE_LABEL_LENGTH = 3;
+```
+
+## Interfaces and Types
+
+### `NameParserOptions`
+
+This interface defines the configuration options for the name parser.
+
+| Property                  | Type               | Description                                                                                        |
+| ------------------------- | ------------------ | -------------------------------------------------------------------------------------------------- |
+| `trimWhitespace`          | `boolean`          | Whether to remove leading and trailing whitespace characters.                                      |
+| `attemptEnsNormalization` | `boolean`          | Whether to attempt ENS normalization on the input. Uses `ens_normalize` for this purpose.          |
+| `assumedTld`              | `string` \| `null` | An optional label to be added as an assumed top-level domain. If `null`, disables any assumed TLD. |
+
+### `NameParserTransformation`
+
+A union type representing the types of transformations that can be performed on the input name.
+
+```typescript
+type NameParserTransformation =
+  | "trim_whitespace"
+  | "assume_tld"
+  | "ens_normalize";
+```
+
+### `ParsedName`
+
+This interface represents the result of parsing a name from user input.
+
+| Property          | Type                         | Description                                                                                 |
+| ----------------- | ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `inputName`       | `string`                     | The original user input.                                                                    |
+| `outputName`      | `ENSName`                    | The parsed and transformed ENS name.                                                        |
+| `transformations` | `NameParserTransformation[]` | A list of transformations that were applied to the input name to construct the output name. |
+
+### Normalization
+
+The `Normalization` type represents the normalization status of an ENS name or label. It can be one of the following:
+
+- `normalized`: The name or label is normalized.
+- `unnormalized`: The name or label is not normalized.
+- `unknown`: The normalization status of the name or label is unknown.
+
+```typescript
+export type Normalization =
+  | "normalized" /** `normalized`: The name or label is normalized. */
+  | "unnormalized" /** `unnormalized`: The name or label is not normalized. */
+  | "unknown" /** `unknown`: The name or label is unknown because it cannot be looked up from its hash. */;
+```
+
+### NamespaceRoot
+
+The `NamespaceRoot` type identifies the root namespace of an ENS name, which can be:
+
+- `ens`: For names ending in `.eth` and the ENS root.
+- `dns`: For names belonging to the DNS namespace.
+- `unknown`: For names with an undetermined namespace root.
+
+```typescript
+export type NamespaceRoot =
+  | "ens" /** For now: Only given to names ending in "eth" and the ENS root */
+  | "dns"
+  | "unknown"; /** For now: Used for all other cases. Future enhancements will make this more specific. */
+```
+
+### RegistrationPotential
+
+The `RegistrationPotential` type indicates whether an ENS name is registrable, and it can be one of:
+
+- `unregisterable`: Direct subnames of `.eth` not long enough for current contracts.
+- `invalid`: Names are technically registerable but unnormalized.
+- `registerable`: Names that are eligible for registration.
+- `unknown`: Names with an undetermined registration potential.
+
+```typescript
+export type RegistrationPotential =
+  | "unregisterable" /** For now: Only given to direct subnames of .eth that are not long enough for current ETHRegistrarController contracts */
+  | "invalid" /** Invalid names are technically registerable, but are unnormalized and should not be registered. */
+  | "registerable"
+  | "unknown"; /** For now: Used for all other cases. Future enhancements will make this more specific. */
+```
+
+### DecentralizationStatus
+
+The `DecentralizationStatus` type describes the decentralization status of an ENS name:
+
+- `unruggable`: Names guaranteed to be decentralized.
+- `icann`: Names under the jurisdiction of ICANN.
+- `unknown`: Names with an unknown decentralization status.
+
+```typescript
+export type DecentralizationStatus =
+  | "unruggable" /** For now: Only given to direct subnames of .eth, the name "eth", and the ENS root. */
+  | "icann"
+  | "unknown"; /** For now: Used for all other cases. Future enhancements will make this more specific. */
+```
+
+### ENSName Interface
+
+The `ENSName` interface represents an ENS name, including its labels, display name, and normalization status.
+
+```typescript
+interface ENSName {
+  name: string;
+  labels: string[];
+  displayName: string;
+  displayLabels: string[];
+  normalization: Normalization;
+}
+```
+
+## Functions
+
+### `trimOuterWhitespace`
+
+Trims leading and trailing whitespace from each label in an array of labels.
+
+**Parameters:**
+
+- `labels`: The array of labels to trim the whitespaces from (`string[]`).
+
+**Returns:** `string[]` - The array of labels without leading and trailing whitespaces.
+
+### `assumeTld`
+
+Appends an assumed TLD to the last label if necessary, based on the configuration.
+
+**Parameters:**
+
+- `labels`: The array of labels to trim the whitespaces from (`string[]`).
+- `assumedTld`: An optional label to be added as an assumed top-level domain. (`string`).
+
+**Returns:** `string[]` - The array of labels with TLD appended.
+
+### `parseName`
+
+The main function that takes an input name and options, applying configured transformations to parse the name into a standardized ENS name format.
+
+**Parameters:**
+
+- `inputName`: The input name to be parsed (`string`).
+- `options`: The configured transformations to parse the name into a standardized ENS name format. (`NameParserOptions | undefined`).
+
+**Returns:** `ParsedName` - This interface represents the result of parsing a name from user input.
+
+#### Example
+
+```typescript
+import { parseName } from "./nameparser";
+
+const options = {
+  trimWhitespace: true,
+  attemptEnsNormalization: true,
+  assumedTld: "eth",
+};
+
+const { inputName, outputName, transformations } = parseName(
+  " example.eth ",
+  options
+);
+```
+
+This example demonstrates how to use the `parseName` function with the `NameParserOptions` to parse and normalize an ENS name input. The output would be a `ParsedName` object with the original input, the processed ENS name, and the transformations applied.
+
+## More important functions
+
+### Label Operations
+
+- `labelsEqual(labels1: string[], labels2: string[])`: Checks if two sets of labels are equal.
+- `getDisplayLabels(labels: string[])`: Converts labels into a display-optimized form.
+- `tryNormalize(labels: string[])`: Attempts to normalize a set of labels.
+
+### ENS Name Operations
+
+- `buildENSName(name: string)`: Builds an `ENSName` object from a string name.
+- `getNamespaceRoot(name: ENSName)`: Identifies the namespace root of a name.
+- `getDecentralizationStatus(name: ENSName)`: Identifies the decentralization status of a name.
+- `getRegistrationPotential(name: ENSName)`: Identifies the registration potential of a name.
+
+### Utility Functions
+
+- `isValidDNSTld(label: string)`: Identifies if a label represents a valid TLD in the DNS namespace.
+- `ethRegistrarControllerLength(label: string)`: Calculates the length of a label as determined by the EthRegistrarController smart contracts.
 
 # Currency
 
