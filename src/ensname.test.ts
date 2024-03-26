@@ -401,3 +401,11 @@ describe("getRegistrationPotential", () => {
     expect(result).toBe("unknown");
   });
 });
+
+describe("ethRegistrarControllerLength", () => {
+  it("empty name", () => {
+    const result = ethRegistrarControllerLength("");
+
+    expect(result).toBe(0);
+  });
+});

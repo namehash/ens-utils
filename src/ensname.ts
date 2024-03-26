@@ -310,9 +310,10 @@ export function getRegistrationPotential(name: ENSName): RegistrationPotential {
   }
 }
 
-// TODO: Write tests
 /**
- * Calculates the length of a label as determined by the EthRegistrarController smart contracts. The contract counts characters in UTF-8 encoding.
+ * Calculates the length of a label as determined by the EthRegistrarController smart contracts. 
+ * The contract counts characters in UTF-8 encoding. 
+ * Source code: https://github.com/ensdomains/ens-contracts/blob/staging/contracts/ethregistrar/StringUtils.sol
  * This length may be different than the traditional ".length" value of a string in Javascript / Typescript because they use UTF-16.
  * @param label
  * @returns the length of `label` as determined by the EthRegistrarController smart contracts.
