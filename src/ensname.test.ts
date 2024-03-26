@@ -420,4 +420,10 @@ describe("ethRegistrarControllerLength", () => {
 
     expect(result).toBe(5);
   });
+
+  it("namehash string", () => {
+    const result = ethRegistrarControllerLength("namehash");
+
+    expect(result).toBe(8);
+  });
 });
