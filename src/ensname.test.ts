@@ -408,4 +408,10 @@ describe("ethRegistrarControllerLength", () => {
 
     expect(result).toBe(0);
   });
+
+  it("multi codepoint emoji", () => {
+    const result = ethRegistrarControllerLength("🧟‍♂");
+
+    expect(result).toBe(3);
+  });
 });
