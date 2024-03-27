@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   buildENSName,
+  ethRegistrarControllerLength,
   getDecentralizationStatus,
   getDisplayLabels,
   getNamespaceRoot,
@@ -399,5 +400,47 @@ describe("getRegistrationPotential", () => {
     const result = getRegistrationPotential(buildENSName("abc.limo"));
 
     expect(result).toBe("unknown");
+  });
+});
+
+describe("ethRegistrarControllerLength", () => {
+  it("empty name", () => {
+    const label = "";
+    const result = ethRegistrarControllerLength(label);
+
+    expect(result).toBe(0);
+    expect(label.length).toBe(0);
+  });
+
+  it("multi codepoint emoji", () => {
+    const label = "🧟‍♂";
+    const result = ethRegistrarControllerLength(label);
+
+    expect(result).toBe(3);  // 3 Unicode characters
+    expect(label.length).toBe(4); // 4 UTF-16 code units
+  });
+
+  it("another multi codepoint emoji", () => {
+    const label = "🤦🏼‍♂️";
+    const result = ethRegistrarControllerLength(label);
+
+    expect(result).toBe(5); // 5 Unicode characters
+    expect(label.length).toBe(7); // 7 UTF-16 code units
+  });
+
+  it("namehash string", () => {
+    const label = "namehash";
+    const result = ethRegistrarControllerLength(label);
+
+    expect(result).toBe(8); // 8 Unicode characters
+    expect(label.length).toBe(8); // 8 UTF-16 code units
+  });
+
+  it("multi codepoint emoji 15.1", () => {
+    const label = "🏃🏿‍➡";
+    const result = ethRegistrarControllerLength(label);
+
+    expect(result).toBe(4); // 4 Unicode characters
+    expect(label.length).toBe(6);  // 6 UTF-16 code units
   });
 });
