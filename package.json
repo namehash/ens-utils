@@ -45,7 +45,8 @@
     "@adraffy/ens-normalize": "1.10.1",
     "@ethersproject/hash": "5.7.0",
     "date-fns": "3.3.1",
-    "decimal.js": "10.4.3"
+    "decimal.js": "10.4.3",
+    "viem": "2.9.3"
   },
   "devDependencies": {
     "semantic-release": "23.0.2",
