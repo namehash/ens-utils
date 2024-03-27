@@ -404,32 +404,42 @@ describe("getRegistrationPotential", () => {
 
 describe("ethRegistrarControllerLength", () => {
   it("empty name", () => {
-    const result = ethRegistrarControllerLength("");
+    label = ""
+    const result = ethRegistrarControllerLength(label);
 
     expect(result).toBe(0);
+    expect(label.length).toBe(0);
   });
 
   it("multi codepoint emoji", () => {
-    const result = ethRegistrarControllerLength("🧟‍♂");
+    label = "🧟‍♂"
+    const result = ethRegistrarControllerLength(label);
 
     expect(result).toBe(3);
+    expect(label.length).toBe(4);
   });
 
   it("another multi codepoint emoji", () => {
-    const result = ethRegistrarControllerLength("🤦🏼‍♂️");
+    label = "🤦🏼‍♂️"
+    const result = ethRegistrarControllerLength(label);
 
     expect(result).toBe(5);
+    expect(label.length).toBe(8);
   });
 
   it("namehash string", () => {
-    const result = ethRegistrarControllerLength("namehash");
+    label = "namehash"
+    const result = ethRegistrarControllerLength(label);
 
     expect(result).toBe(8);
+    expect(label.length).toBe(7);
   });
 
   it("multi codepoint emoji 15.1", () => {
-    const result = ethRegistrarControllerLength("🏃🏿‍➡");
+    label = "🏃🏿‍➡"
+    const result = ethRegistrarControllerLength(label);
 
     expect(result).toBe(4);
+    expect(label.length).toBe(6);
   });
 });
