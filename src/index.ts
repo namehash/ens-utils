@@ -5,3 +5,5 @@ export * from "./time";
 export * from "./ensname";
 export * from "./hashutils";
 export * from "./nameparser";
+export * from "./ethregistrar";
+export * from "./nftreference";
