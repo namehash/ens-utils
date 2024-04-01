@@ -1,4 +1,3 @@
-import { N } from "ethers";
 import { getAddress } from "viem";
 
 export interface NFTReference {
