@@ -25,12 +25,21 @@ export const msToSeconds = (ms: bigint): bigint => {
 };
 
 /**
+ * Retrieves the current time in millisceonds.
+ * @returns bigint - The current timestamp in millisceonds.
+ */
+export const nowMs = (): bigint => {
+  // Returns the current time in milliseconds as a BigInt
+  return BigInt(Date.now());
+};
+
+/**
  * Retrieves the current time in seconds.
  * @returns bigint - The current timestamp in seconds.
  */
 export const now = (): bigint => {
   // Returns the current time in seconds as a BigInt
-  return msToSeconds(BigInt(Date.now()));
+  return msToSeconds(nowMs());
 };
 
 const shortDateFormat = "d MMM yyyy";
