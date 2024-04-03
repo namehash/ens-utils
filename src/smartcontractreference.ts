@@ -1,4 +1,5 @@
 import { getAddress } from "viem";
+import { buildBlockchainReference } from "./blockchainreference";
 
 export interface SmartContractReference {
 
@@ -20,37 +21,17 @@ export const buildSmartContractReference = (
     contractAddress: `0x${string}` | string,
 ): SmartContractReference => {
 
-
-    let chain : number;
-
-    if (typeof chainId === "string") {
-
-        chain = Number(chainId);
-
-        if (Number.isNaN(chain)) {
-            throw new Error(`Invalid chain ID: ${chainId}`);
-        }
-    } else {
-        chain = chainId
-    }
-
-    if (chain % 1 !== 0) {
-        throw new Error(`Invalid chain ID: ${chainId}`);
-    }
-
-    if (chain <= 0) {
-        throw new Error(`Invalid chain ID: ${chainId}`);
-    }
+    const chain = buildBlockchainReference(chainId);
 
     let address;
     try {
-        address = getAddress(contractAddress, chain);
+        address = getAddress(contractAddress, chain.chainId);
     } catch (e) {
         throw new Error(`Invalid address: ${contractAddress}`);
     }
 
     return {
-        chainId: chain,
+        chainId: chain.chainId,
         contractAddress: address,
     };
 }
