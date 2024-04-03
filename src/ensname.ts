@@ -5,6 +5,7 @@ import {
   labelhash,
   normalizeEncodedLabelhash,
 } from "./hashutils";
+import { namehash } from "viem";
 
 export const LABEL_SEPARATOR = ".";
 export const ETH_TLD = "eth";
@@ -67,6 +68,11 @@ export interface ENSName {
    * The normalization status of `name`.
    */
   normalization: Normalization;
+
+  /**
+   * The node of `name` as calculated by the `namehash` function.
+   */
+  node: `0x${string}`;
 }
 
 /**
@@ -186,6 +192,7 @@ export function buildENSName(name: string): ENSName {
   const displayLabels = getDisplayLabels(labels);
   const displayName = displayLabels.join(LABEL_SEPARATOR);
   const normalization = getNormalizationStatus(labels);
+  const node = namehash(name);
 
   return {
     name,
@@ -193,6 +200,7 @@ export function buildENSName(name: string): ENSName {
     displayName,
     displayLabels,
     normalization,
+    node,
   };
 }
 
