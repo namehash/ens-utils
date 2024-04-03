@@ -1,12 +1,6 @@
-import { getAddress } from "viem";
+import { SmartContractReference, buildSmartContractReference } from "./smartcontractreference";
 
-export interface NFTReference {
-
-    // Source chain ID of the NFT
-    chainId: number;
-
-    // Contract address of the NFT
-    contractAddress: `0x${string}`;
+export interface NFTReference extends SmartContractReference {
 
     // Token ID of the NFT
     tokenId: bigint;
@@ -25,50 +19,23 @@ export const buildNFTReference = (
     tokenId: bigint | string
 ): NFTReference => {
 
-
-    let chain : number;
-
-    if (typeof chainId === "string") {
-
-        chain = Number(chainId);
-
-        if (Number.isNaN(chain)) {
-            throw new Error(`Invalid chain ID: ${chainId} in buildNFTReference`);
-        }
-    } else {
-        chain = chainId
-    }
-
-    if (chain % 1 !== 0) {
-        throw new Error(`Invalid chain ID: ${chainId} in buildNFTReference`);
-    }
-
-    if (chain <= 0) {
-        throw new Error(`Invalid chain ID: ${chainId} in buildNFTReference`);
-    }
-
-    let address;
-    try {
-        address = getAddress(contractAddress, chain);
-    } catch (e) {
-        throw new Error(`Invalid address: ${contractAddress} in buildNFTReference`);
-    }
+    const contract = buildSmartContractReference(chainId, contractAddress);
 
     if (typeof tokenId === "string") {
         try {
             tokenId = BigInt(tokenId);
         } catch (e) {
-            throw new Error(`Invalid token ID: ${tokenId} in buildNFTReference`);
+            throw new Error(`Invalid token ID: ${tokenId}`);
         }
     }
 
     if (tokenId < 0) {
-        throw new Error(`Invalid token ID: ${tokenId} in buildNFTReference`);
+        throw new Error(`Invalid token ID: ${tokenId}`);
     }
 
     return {
-        chainId: chain,
-        contractAddress: address,
+        chainId: contract.chainId,
+        contractAddress: contract.contractAddress,
         tokenId
     };
 }

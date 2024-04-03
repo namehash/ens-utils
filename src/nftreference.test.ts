@@ -41,7 +41,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = 1234567890123456789012345678901234567890n;
     
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: q in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: q");
       });
 
       it("Invalid chainId: chainId 0", () => {
@@ -49,7 +49,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = 1234567890123456789012345678901234567890n;
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: 0 in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: 0");
       });
 
       it("Invalid chainId: chainId -1", () => {
@@ -57,7 +57,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = 1234567890123456789012345678901234567890n;
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: -1 in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: -1");
       });
 
       it("Invalid chainId: chainId 1.5", () => {
@@ -65,7 +65,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = 1234567890123456789012345678901234567890n;
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: 1.5 in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: 1.5");
       });
 
       it("Invalid address", () => {
@@ -73,7 +73,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "x";
         const tokenId = 1234567890123456789012345678901234567890n;
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid address: x in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid address: x");
       });
 
       it("Invalid tokenId", () => {
@@ -81,7 +81,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = "x";
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: x in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: x");
       });
 
       it("Negative tokenId", () => {
@@ -89,7 +89,7 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = -1n;
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: -1 in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: -1");
       });
 
 });
