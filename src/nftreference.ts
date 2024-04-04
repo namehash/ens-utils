@@ -2,20 +2,23 @@ import { SmartContractReference, buildSmartContractReference } from "./contract"
 
 export interface NFTReference extends SmartContractReference {
 
-    // Token ID of the NFT
+    /**
+     * Token ID of the NFT.
+     * Always a non-negative integer.
+     */
     tokenId: bigint;
 };
 
 /**
  * Builds a NFTReference object.
- * @param chainId the chain ID of the NFT. See https://chainid.network/
- * @param contractAddress the contract address of the NFT on the specified chainId.
+ * @param chainId the chain ID of the NFT. See src/blockchain.ts
+ * @param contractAddress the address of the NFT on the specified chainId.
  * @param tokenId the token ID of the NFT within the specified contractAddress.
  * @returns a NFTReference object.
  */
 export const buildNFTReference = (
     chainId: number | string,
-    contractAddress: `0x${string}` | string,
+    contractAddress: string,
     tokenId: bigint | string
 ): NFTReference => {
 
@@ -25,12 +28,16 @@ export const buildNFTReference = (
         try {
             tokenId = BigInt(tokenId);
         } catch (e) {
-            throw new Error(`Invalid token ID: ${tokenId}`);
+            throw new Error(`Invalid token ID: ${tokenId}. All token ID values must be integers.`);
         }
     }
 
     if (tokenId < 0) {
-        throw new Error(`Invalid token ID: ${tokenId}`);
+        throw new Error(`Invalid token ID: ${tokenId}. Must be non-negative.`);
+    }
+
+    if (tokenId > 115792089237316195423570985008687907853269984665640564039457584007913129639935n) {
+        throw new Error(`Invalid token ID: ${tokenId}. Must be representable as a uint256 value.`);
     }
 
     return {
