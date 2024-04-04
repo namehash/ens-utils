@@ -1,4 +1,4 @@
-import { SmartContractReference, buildSmartContractReference } from "./smartcontractreference";
+import { SmartContractReference, buildSmartContractReference } from "./contract";
 
 export interface NFTReference extends SmartContractReference {
 

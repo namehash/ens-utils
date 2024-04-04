@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSmartContractReference } from "./smartcontractreference";
+import { buildSmartContractReference } from "./contract";
 
 describe("buildSmartContractReference() function", () => {
 
