@@ -3,7 +3,9 @@ import { BlockchainReference, buildBlockchainReference } from "./blockchain";
 
 export interface SmartContractReference extends BlockchainReference {
 
-    // Contract address
+    /**
+     * Contract address
+     */
     contractAddress: `0x${string}`;
 };
 
