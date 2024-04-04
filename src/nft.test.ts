@@ -4,7 +4,7 @@ import {
     buildNFTReference,
     fromNFTReferenceToString,
     fromStringToNFTReference,
-} from "./nftreference";
+} from "./nft";
 
 describe("buildNFTReference() function", () => {
 
