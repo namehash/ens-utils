@@ -1,5 +1,5 @@
 import { getAddress } from "viem";
-import { buildBlockchainReference } from "./blockchainreference";
+import { buildBlockchainReference } from "./blockchain";
 
 export interface SmartContractReference {
 

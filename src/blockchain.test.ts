@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildBlockchainReference, getBlockchainByName, getBlockchainMetadata } from "./blockchainreference";
+import { buildBlockchainReference, getBlockchainByName, getBlockchainMetadata } from "./blockchain";
 
 describe("buildBlockchainReference() function", () => {
 
