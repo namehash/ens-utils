@@ -1,24 +1,21 @@
 import { getAddress } from "viem";
-import { buildBlockchainReference } from "./blockchain";
+import { BlockchainReference, buildBlockchainReference } from "./blockchain";
 
-export interface SmartContractReference {
+export interface SmartContractReference extends BlockchainReference {
 
-    // Source chain ID of the smart contract
-    chainId: number;
-
-    // Contract address of the smart contract
+    // Contract address
     contractAddress: `0x${string}`;
 };
 
 /**
  * Builds a SmartContractReference object.
- * @param chainId the chain ID of the smart contract. See https://chainid.network/
- * @param contractAddress the contract address of the smart contract on the specified chainId.
+ * @param chainId the chain ID of the smart contract. See https://chainlist.org/
+ * @param contractAddress the address of the smart contract on the specified chainId.
  * @returns a SmartContractReference object.
  */
 export const buildSmartContractReference = (
     chainId: number | string,
-    contractAddress: `0x${string}` | string,
+    contractAddress: string,
 ): SmartContractReference => {
 
     const chain = buildBlockchainReference(chainId);
