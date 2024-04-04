@@ -64,11 +64,30 @@ export const buildBlockchainReference = (
     };
 }
 
+let knownChains: BlockchainMetadata[] = [];
+
+/**
+ * Add a chain to the list of known chains.
+ * Throws an error if a chain with the same ID or name is already registered.
+ */ 
+export const addKnownChain = (
+    metadata: BlockchainMetadata
+): void => {
+    knownChains.every(c => {
+        if (c.ref.chainId === metadata.ref.chainId) {
+            throw new Error(`Chain with ID ${metadata.ref.chainId} already registered.`);
+        }
+        if (c.name === metadata.name) {
+            throw new Error(`Chain with name ${metadata.name} already registered.`);
+        }
+        return true;
+    });
+    knownChains.push(metadata);
+}
+
 // starting simple here
-const knownChains: BlockchainMetadata[] = [
-    { ref: buildBlockchainReference(1), name: "mainnet", displayName: "Ethereum Mainnet" },
-    { ref: buildBlockchainReference(11155111), name: "sepolia", displayName: "Sepolia" },
-];
+addKnownChain({ref: buildBlockchainReference(1), name: "mainnet", displayName: "Ethereum Mainnet" });
+addKnownChain({ref: buildBlockchainReference(11155111), name: "sepolia", displayName: "Sepolia" });
 
 /**
  * Get a blockchain by name (case-insensitive).
