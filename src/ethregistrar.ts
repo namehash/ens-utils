@@ -1,5 +1,5 @@
 import { ENSName, ETH_TLD } from "./ensname";
-import { NFTReference } from "./nftreference";
+import { NFTReference } from "./nft";
 import { namehash, labelhash } from 'viem/ens'
 
 // TODO: maybe use `extractChain` in viem? Or maybe better not to make use of viem/chains at all given bundle size concern?
