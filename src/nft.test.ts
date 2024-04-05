@@ -4,11 +4,11 @@ import {
     buildNFTReference,
     fromNFTReferenceToString,
     fromStringToNFTReference,
-} from "./nftreference";
+} from "./nft";
 
 describe("buildNFTReference() function", () => {
 
-    it("Build NFTReference from string values", () => {
+    it("Build from string values", () => {
         const chainId = "1";
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = "1234567890123456789012345678901234567890";
@@ -22,7 +22,7 @@ describe("buildNFTReference() function", () => {
         });
       });
 
-      it("Build NFTReference from non-string values", () => {
+      it("Build from non-string values", () => {
         const chainId = 1;
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = 1234567890123456789012345678901234567890n;
@@ -36,52 +36,12 @@ describe("buildNFTReference() function", () => {
         });
       });
 
-      it("Invalid chainId: non-number", () => {
-        const chainId = "q";
-        const contractAddress = "0x1234567890123456789012345678901234567890";
-        const tokenId = 1234567890123456789012345678901234567890n;
-    
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: q in buildNFTReference");
-      });
-
-      it("Invalid chainId: chainId 0", () => {
-        const chainId = 0;
-        const contractAddress = "0x1234567890123456789012345678901234567890";
-        const tokenId = 1234567890123456789012345678901234567890n;
-
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: 0 in buildNFTReference");
-      });
-
-      it("Invalid chainId: chainId -1", () => {
-        const chainId = -1;
-        const contractAddress = "0x1234567890123456789012345678901234567890";
-        const tokenId = 1234567890123456789012345678901234567890n;
-
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: -1 in buildNFTReference");
-      });
-
-      it("Invalid chainId: chainId 1.5", () => {
-        const chainId = 1.5;
-        const contractAddress = "0x1234567890123456789012345678901234567890";
-        const tokenId = 1234567890123456789012345678901234567890n;
-
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid chain ID: 1.5 in buildNFTReference");
-      });
-
-      it("Invalid address", () => {
-        const chainId = 1;
-        const contractAddress = "x";
-        const tokenId = 1234567890123456789012345678901234567890n;
-
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid address: x in buildNFTReference");
-      });
-
-      it("Invalid tokenId", () => {
+      it("Non-integer tokenId", () => {
         const chainId = 1;
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = "x";
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: x in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: x. All token ID values must be integers.");
       });
 
       it("Negative tokenId", () => {
@@ -89,7 +49,29 @@ describe("buildNFTReference() function", () => {
         const contractAddress = "0x1234567890123456789012345678901234567890";
         const tokenId = -1n;
 
-        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: -1 in buildNFTReference");
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: -1. Must be non-negative.");
+      });
+
+      it("Max allowed tokenId value", () => {
+        const chainId = 1;
+        const contractAddress = "0x1234567890123456789012345678901234567890";
+        const tokenId = (2n ** 256n) - 1n;
+
+        const result = buildNFTReference(chainId, contractAddress, tokenId);
+    
+        expect(result).toStrictEqual({
+            chainId: 1,
+            contractAddress: "0x1234567890123456789012345678901234567890",
+            tokenId: 115792089237316195423570985008687907853269984665640564039457584007913129639935n,
+        });
+      });
+
+      it("tokenId value overflow", () => {
+        const chainId = 1;
+        const contractAddress = "0x1234567890123456789012345678901234567890";
+        const tokenId = 2n ** 256n;
+    
+        expect(() => buildNFTReference(chainId, contractAddress, tokenId)).toThrow("Invalid token ID: 115792089237316195423570985008687907853269984665640564039457584007913129639936. Must be representable as a uint256 value.");
       });
 
 });

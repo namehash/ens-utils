@@ -5,6 +5,7 @@ import {
   labelhash,
   normalizeEncodedLabelhash,
 } from "./hashutils";
+import { namehash } from "viem";
 
 export const LABEL_SEPARATOR = ".";
 export const ETH_TLD = "eth";
@@ -67,6 +68,11 @@ export interface ENSName {
    * The normalization status of `name`.
    */
   normalization: Normalization;
+
+  /**
+   * The node of `name` as calculated by the `namehash` function.
+   */
+  node: `0x${string}`;
 }
 
 /**
@@ -186,6 +192,7 @@ export function buildENSName(name: string): ENSName {
   const displayLabels = getDisplayLabels(labels);
   const displayName = displayLabels.join(LABEL_SEPARATOR);
   const normalization = getNormalizationStatus(labels);
+  const node = namehash(name);
 
   return {
     name,
@@ -193,6 +200,7 @@ export function buildENSName(name: string): ENSName {
     displayName,
     displayLabels,
     normalization,
+    node,
   };
 }
 
@@ -281,7 +289,7 @@ export function getRegistrationPotential(name: ENSName): RegistrationPotential {
   switch (getNamespaceRoot(name)) {
     case "ens":
       if (
-        ethRegistrarControllerLength(name.labels[name.labels.length - 2]) <
+        charCount(name.labels[name.labels.length - 2]) <
         MIN_ETH_REGISTRABLE_LABEL_LENGTH
       ) {
         // too short to be allowed by any current ETHRegistrarControllers
@@ -311,7 +319,9 @@ export function getRegistrationPotential(name: ENSName): RegistrationPotential {
 }
 
 /**
- * Calculates the length of a label as determined by the EthRegistrarController smart contracts.
+ * Calculates the number of characters in a label.
+ * 
+ * NOTE: This length will be the same as determined by the EthRegistrarController smart contracts.
  * These contracts calculate length using the following code that counts Unicode characters in UTF-8 encoding.
  * https://github.com/ensdomains/ens-contracts/blob/staging/contracts/ethregistrar/StringUtils.sol
  * 
@@ -320,8 +330,8 @@ export function getRegistrationPotential(name: ENSName): RegistrationPotential {
  * UTF-16 represents Unicode characters with codepoints higher can fit within a 16 bit value as a "surrogate pair"
  * of UTF-16 code units. This means that some Unicode characters are represented by *more than one* UTF-16 code unit.
  * @param label
- * @returns the length of `label` as determined by the EthRegistrarController smart contracts.
+ * @returns the number of characters within `label`.
  */
-export function ethRegistrarControllerLength(label: string) {
+export function charCount(label: string) {
   return [...label].length;
 }
