@@ -25,6 +25,12 @@ Tests are automatically ran when a new Pull Request is opened. You can run them 
 
 If you're developing locally, you can watch changes and run tests automatically using `pnpm test:watch`.
 
+## Continuous Deployment
+
+This uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to automatically trigger new releases to NPM on merge to `main`. Make sure the pull request contains a prefix.
+
+We use [Semantic Release](https://semantic-release.gitbook.io/semantic-release/) in CI to check commits, and release a new version on NPM, tag on GitHub, and reply to any Pull Requests that they have been included in the version.
+
 ## Install
 
 ```bash
