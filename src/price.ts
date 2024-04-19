@@ -1,8 +1,17 @@
-import { Currency, PriceCurrencyFormat } from "./currency";
-import { approxScaleBigInt } from "./number";
+import { Currency, PriceCurrencyFormat, parseStringToCurrency } from "./currency";
+import { approxScaleBigInt, stringToBigInt } from "./number";
 
 export interface Price {
+
+  // TODO: consider adding a constraint where value is never negative
+  /**
+   * The value of the price. This is a BigInt to avoid floating point math issues when working with prices.
+   * For example, a price of 1.23 USD would be represented as 123n with a currency of USD.
+   * Note that the value is always in the smallest unit of the currency (e.g. cents for USD, wei for ETH).
+   * See the CurrencyConfig for the related currency for the number of decimals to use when converting the value to a human-readable format.
+   */
   value: bigint;
+
   currency: Currency;
 }
 
@@ -10,6 +19,35 @@ export interface Price {
 // which is a number value. One example of an ExchangeRates object would be:
 // { ETH: 1737.16, DAI: 0.99999703, USDC: 1, WETH: 1737.16, USD: 1 }
 export interface ExchangeRates extends Partial<Record<Currency, number>> {}
+
+/**
+ * Builds a Price object.
+ * @param value the value of the price. This is a BigInt to avoid floating point math issues when working with prices.
+   * For example, a price of 1.23 USD would be represented as 123n with a currency of USD.
+   * Note that the value is always in the smallest unit of the currency (e.g. cents for USD, wei for ETH).
+   * See the CurrencyConfig for the related currency for the number of decimals to use when converting the value to a human-readable format.
+ * @param currency 
+ * @returns 
+ */
+export const buildPrice = (value: bigint | string, currency: Currency | string): Price => {
+
+  let priceValue : bigint;
+  let priceCurrency : Currency;
+
+  if (typeof value === "string") {
+    priceValue = stringToBigInt(value)
+  } else {
+    priceValue = value;
+  }
+
+  if (typeof currency === "string") {
+    priceCurrency = parseStringToCurrency(currency);
+  } else {
+    priceCurrency = currency;
+  }
+
+  return { value: priceValue, currency: priceCurrency };
+}
 
 export const priceAsNumber = (price: Price): number => {
   return (

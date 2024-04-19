@@ -170,7 +170,7 @@ export const parseStringToCurrency = (str: string): Currency => {
   const curatedStr = str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   const currency = Currency[curatedStr as keyof typeof Currency];
 
-  if (!currency) throw new Error("Input string is not a valid currency");
+  if (!currency) throw new Error(`Cannot convert: "${str}" to a recognized Currency`);
 
   return currency;
 };
