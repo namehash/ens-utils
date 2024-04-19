@@ -137,13 +137,13 @@ describe("parseStringToCurrency() function", () => {
 
   it("should throw an error for invalid currency string", () => {
     expect(() => parseStringToCurrency("invalid")).toThrow(
-      "Input string is not a valid currency"
+      "Cannot convert: \"invalid\" to a recognized Currency"
     );
   });
 
   it("should throw an error for empty string", () => {
     expect(() => parseStringToCurrency("")).toThrow(
-      "Input string is not a valid currency"
+      "Cannot convert: \"\" to a recognized Currency"
     );
   });
 });

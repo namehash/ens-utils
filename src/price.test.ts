@@ -1,7 +1,49 @@
 import { describe, it, expect } from "vitest";
 
-import { Price, convertCurrencyWithRates, formattedPrice } from "./price";
+import { Price, buildPrice, convertCurrencyWithRates, formattedPrice } from "./price";
 import { Currency, PriceCurrencyFormat } from "./currency";
+
+describe("buildPrice() function", () => {
+
+  it("Build from string values", () => {
+      const value = "100";
+      const currency = "USD";
+
+      const result = buildPrice(value, currency);
+  
+      expect(result).toStrictEqual({
+          value: 100n,
+          currency: Currency.Usd,
+      });
+    });
+
+    it("Build from non-string values", () => {
+      const value = 100n;
+      const currency = Currency.Usd;
+
+      const result = buildPrice(value, currency);
+  
+      expect(result).toStrictEqual({
+          value: 100n,
+          currency: Currency.Usd,
+      });
+    });
+
+    it("Invalid value", () => {
+      const value = "abc";
+      const currency = "USD";
+  
+      expect(() => buildPrice(value, currency)).toThrow(`Cannot convert string: ${value} to BigInt`);
+    });
+
+    it("Invalid currency", () => {
+      const value = "100";
+      const currency = "invalid";
+  
+      expect(() => buildPrice(value, currency)).toThrow(`Cannot convert: "${currency}" to a recognized Currency`);
+    });
+
+});
 
 enum CurrencyTestScenario {
   "UNDERFLOW",
