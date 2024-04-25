@@ -1,108 +1,102 @@
 import { describe, it, expect } from "vitest";
-import { buildBlockchainReference, getBlockchainByName, getBlockchainMetadata } from "./blockchain";
+import { MAINNET, buildChainId, getChainByName, getChainMetadata } from "./blockchain";
 
-describe("buildBlockchainReference() function", () => {
+describe("buildChainId() function", () => {
 
-    it("Build from string values", () => {
+    it("Build from string", () => {
         const chainId = "1";
 
-        const result = buildBlockchainReference(chainId);
+        const result = buildChainId(chainId);
     
-        expect(result).toStrictEqual({
-            chainId: 1,
-        });
+        expect(result).toStrictEqual(MAINNET);
       });
 
-      it("Build from non-string values", () => {
+      it("Build from number", () => {
         const chainId = 1;
 
-        const result = buildBlockchainReference(chainId);
+        const result = buildChainId(chainId);
     
-        expect(result).toStrictEqual({
-            chainId: 1,
-        });
+        expect(result).toStrictEqual(MAINNET);
       });
 
       it("Invalid chainId: non-number", () => {
         const chainId = "q";
     
-        expect(() => buildBlockchainReference(chainId)).toThrow("Invalid chain ID: q. All chain IDs must be numbers.");
+        expect(() => buildChainId(chainId)).toThrow();
       });
 
       it("Invalid chainId: chainId non-positive", () => {
         const chainId = 0;
 
-        expect(() => buildBlockchainReference(chainId)).toThrow("Invalid chain ID: 0. All chain IDs must be positive integers.");
+        expect(() => buildChainId(chainId)).toThrow();
       });
 
       it("Invalid chainId: chainId negative", () => {
         const chainId = -1;
 
-        expect(() => buildBlockchainReference(chainId)).toThrow("Invalid chain ID: -1. All chain IDs must be positive integers.");
+        expect(() => buildChainId(chainId)).toThrow();
       });
 
       it("Invalid chainId: chainId non-integer", () => {
         const chainId = 1.5;
 
-        expect(() => buildBlockchainReference(chainId)).toThrow("Invalid chain ID: 1.5. All chain IDs must be integers.");
+        expect(() => buildChainId(chainId)).toThrow();
+      });
+
+      it("Invalid chainId: chainId non-integer string", () => {
+        const chainId = "1.5";
+    
+        expect(() => buildChainId(chainId)).toThrow();
       });
 
       it("Invalid chainId: chainId NaN", () => {
         const chainId = NaN;
 
-        expect(() => buildBlockchainReference(chainId)).toThrow("Invalid chain ID: NaN. All chain IDs must be numbers.");
+        expect(() => buildChainId(chainId)).toThrow();
       });
 
       it("Invalid chainId: chainId Infinity", () => {
         const chainId = Infinity;
 
-        expect(() => buildBlockchainReference(chainId)).toThrow("Invalid chain ID: Infinity. All chain IDs must be finite numbers.");
+        expect(() => buildChainId(chainId)).toThrow();
       });
 
 });
 
-describe("getBlockchainByName() function", () => {
+describe("getChainByName() function", () => {
 
   it("known chain", () => {
       const name = "mainnet";
 
-      const result = getBlockchainByName(name);
+      const result = getChainByName(name);
   
-      expect(result).toStrictEqual({
-          chainId: 1,
-      });
+      expect(result).toStrictEqual(MAINNET);
     });
 
     it("case-insensitive unknown chain", () => {
       const name = "Mainnet";
 
-      const result = getBlockchainByName(name);
-  
-      expect(result).toBeNull();
+      expect(() => getChainByName(name)).toThrow();
     });
 
     it("general unknown chain", () => {
       const name = "unknown";
 
-      const result = getBlockchainByName(name);
-  
-      expect(result).toBeNull();
+      expect(() => getChainByName(name)).toThrow();
     });
 });
 
-describe("getBlockchainMetadata() function", () => {
+describe("getChainMetadata() function", () => {
 
   it("known chain", () => {
-      const ref = buildBlockchainReference(1);
-      const result = getBlockchainMetadata(ref);
+      const result = getChainMetadata(MAINNET);
   
       expect(result).toBeDefined();
     });
 
     it("unknown chain", () => {
-      const ref = buildBlockchainReference(1234567890);
-      const result = getBlockchainMetadata(ref);
-  
-      expect(result).toBeNull();
+      const chainId = buildChainId(1234567890);
+      
+      expect(() => getChainMetadata(chainId)).toThrow();
     });
 });

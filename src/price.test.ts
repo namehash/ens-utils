@@ -299,7 +299,7 @@ describe("Currencies underflow displaying", () => {
       Currency.Gas
     );
 
-    console.log("GAS Underflow is ", result);
+    // console.log("GAS Underflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -309,7 +309,7 @@ describe("Currencies underflow displaying", () => {
       Currency.Usd
     );
 
-    console.log("USD Underflow is ", result);
+    // console.log("USD Underflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -319,7 +319,7 @@ describe("Currencies underflow displaying", () => {
       Currency.Eth
     );
 
-    console.log("ETH Underflow is ", result);
+    // console.log("ETH Underflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -329,7 +329,7 @@ describe("Currencies underflow displaying", () => {
       Currency.Weth
     );
 
-    console.log("WETH Underflow is ", result);
+    // console.log("WETH Underflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -339,7 +339,7 @@ describe("Currencies underflow displaying", () => {
       Currency.Dai
     );
 
-    console.log("DAI Underflow is ", result);
+    // console.log("DAI Underflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -349,7 +349,7 @@ describe("Currencies underflow displaying", () => {
       Currency.Usdc
     );
 
-    console.log("USDC Underflow is ", result);
+    // console.log("USDC Underflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -362,7 +362,7 @@ describe("Currencies min value displaying", () => {
       Currency.Usd
     );
 
-    console.log("USD Min is ", result);
+    // console.log("USD Min is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -372,7 +372,7 @@ describe("Currencies min value displaying", () => {
       Currency.Eth
     );
 
-    console.log("ETH Min is ", result);
+    // console.log("ETH Min is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -382,7 +382,7 @@ describe("Currencies min value displaying", () => {
       Currency.Weth
     );
 
-    console.log("WETH Min is ", result);
+    // console.log("WETH Min is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -392,7 +392,7 @@ describe("Currencies min value displaying", () => {
       Currency.Dai
     );
 
-    console.log("DAI Min is ", result);
+    // console.log("DAI Min is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -402,7 +402,7 @@ describe("Currencies min value displaying", () => {
       Currency.Usdc
     );
 
-    console.log("USDC Min is ", result);
+    // console.log("USDC Min is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -415,7 +415,7 @@ describe("Currencies regular values displaying", () => {
       Currency.Usd
     );
 
-    console.log("USD Regular is ", result);
+    // console.log("USD Regular is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -425,7 +425,7 @@ describe("Currencies regular values displaying", () => {
       Currency.Eth
     );
 
-    console.log("ETH Regular is ", result);
+    // console.log("ETH Regular is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -435,7 +435,7 @@ describe("Currencies regular values displaying", () => {
       Currency.Weth
     );
 
-    console.log("WETH Regular is ", result);
+    // console.log("WETH Regular is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -445,7 +445,7 @@ describe("Currencies regular values displaying", () => {
       Currency.Dai
     );
 
-    console.log("DAI Regular is ", result);
+    // console.log("DAI Regular is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -455,7 +455,7 @@ describe("Currencies regular values displaying", () => {
       Currency.Usdc
     );
 
-    console.log("USDC Regular is ", result);
+    // console.log("USDC Regular is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -468,7 +468,7 @@ describe("Currencies max values displaying", () => {
       Currency.Gas
     );
 
-    console.log("GAS Max is ", result);
+    // console.log("GAS Max is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -478,7 +478,7 @@ describe("Currencies max values displaying", () => {
       Currency.Usd
     );
 
-    console.log("USD Max is ", result);
+    // console.log("USD Max is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -495,7 +495,7 @@ describe("Currencies max values displaying", () => {
       Currency.Usdc
     );
 
-    console.log("USDC Max is ", result);
+    // console.log("USDC Max is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -508,7 +508,7 @@ describe("Currencies overflow values displaying", () => {
       Currency.Gas
     );
 
-    console.log("GAS Overflow is ", result);
+    // console.log("GAS Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -518,7 +518,7 @@ describe("Currencies overflow values displaying", () => {
       Currency.Usd
     );
 
-    console.log("USD Overflow is ", result);
+    // console.log("USD Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -528,7 +528,7 @@ describe("Currencies overflow values displaying", () => {
       Currency.Eth
     );
 
-    console.log("ETH Overflow is ", result);
+    // console.log("ETH Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -538,7 +538,7 @@ describe("Currencies overflow values displaying", () => {
       Currency.Weth
     );
 
-    console.log("WETH Overflow is ", result);
+    // console.log("WETH Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -548,7 +548,7 @@ describe("Currencies overflow values displaying", () => {
       Currency.Dai
     );
 
-    console.log("DAI Overflow is ", result);
+    // console.log("DAI Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });
@@ -558,7 +558,7 @@ describe("Currencies overflow values displaying", () => {
       Currency.Usdc
     );
 
-    console.log("USDC Overflow is ", result);
+    // console.log("USDC Overflow is ", result);
 
     expect(result.output).toBe(result.expectedOutput);
   });

@@ -1,15 +1,16 @@
 import { ENSName, ETH_TLD } from "./ensname";
-import { NFTReference } from "./nft";
+import { NFTRef, TokenId, buildNFTRef, buildTokenId } from "./nft";
 import { namehash, labelhash } from 'viem/ens'
+import { buildAddress, isAddressEqual } from "./address";
+import { ChainId, MAINNET } from "./blockchain";
+import { assert } from "vitest";
+import { ContractRef, buildContractRef } from "./contract";
 
-// TODO: maybe use `extractChain` in viem? Or maybe better not to make use of viem/chains at all given bundle size concern?
-import { mainnet } from 'viem/chains';
-
-// known mainnet registrars
-export const WRAPPED_CONTRACT_ADDRESS =
-  "0xd4416b13d2b3a9abae7acd5d6c2bbdbe25686401";
-export const UNWRAPPED_CONTRACT_ADDRESS =
-  "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85";
+// known registrars
+export const WRAPPED_MAINNET_ETH_REGISTRAR =
+  buildContractRef(MAINNET, buildAddress("0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401"));
+export const UNWRAPPED_MAINNET_ETH_REGISTRAR =
+  buildContractRef(MAINNET, buildAddress("0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"));
 
 /**
  * Identifies if the provided name is a direct subname of ".eth".
@@ -32,43 +33,35 @@ export function belongsToEthRegistar(name: ENSName): boolean {
  * @param name the name to evaluate.
  * @param chainId the id of the chain the name is managed on.
  * @param isWrapped if the name is wrapped or not.
- * @returns the contract address of the registrar smart contract for the provided name and chainId or `null` if the registrar is not known.
+ * @returns the contract of the registrar for the provided name and chainId or `null` if the registrar is not known.
  */
-export function getKnownRegistrar(name: ENSName, chainId: number, isWrapped: boolean): `0x${string}` | null {
+export function getKnownRegistrar(name: ENSName, chain: ChainId, isWrapped: boolean): ContractRef | null {
     if (!belongsToEthRegistar(name)) return null;
 
     // TODO: Add confirmed handling for additional chains.
-    if (chainId !== mainnet.id) return null;
-    return isWrapped ? WRAPPED_CONTRACT_ADDRESS : UNWRAPPED_CONTRACT_ADDRESS;
+    if (chain.chainId !== MAINNET.chainId) return null;
+
+    return isWrapped ? WRAPPED_MAINNET_ETH_REGISTRAR : UNWRAPPED_MAINNET_ETH_REGISTRAR;
 }
 
-
-export function getKnownNFTReference(name: ENSName, chainId: number, isWrapped: boolean): NFTReference | null {
+export function buildNFTRefFromENSName(name: ENSName, chain: ChainId, isWrapped: boolean): NFTRef | null {
     // TODO: better handle the case of unnormalized or unknown names
     if (name.normalization !== "normalized") return null;
 
-    const registrar = getKnownRegistrar(name, chainId, isWrapped);
+    const registrar = getKnownRegistrar(name, chain, isWrapped);
 
     if (registrar === null) return null;
 
-    let tokenId : bigint | null = null;
+    let token : TokenId;
 
-    switch (registrar) {
-
-        case WRAPPED_CONTRACT_ADDRESS:
-            tokenId = BigInt(namehash(name.name));
-            break;
-        case UNWRAPPED_CONTRACT_ADDRESS:
-          if (name.labels.length > 0)
-            tokenId = BigInt(labelhash(name.labels[0]));
-          break;
+    if (isAddressEqual(registrar.address, WRAPPED_MAINNET_ETH_REGISTRAR.address)) {
+      token = buildTokenId(BigInt(namehash(name.name)));
+    } else if (isAddressEqual(registrar.address, UNWRAPPED_MAINNET_ETH_REGISTRAR.address)) {
+      assert(name.labels.length === 2, `Name: "${name}" is incorrectly associated with the UNWRAPPED_MAINNET_ETH_REGISTRAR registrar`)    
+      token = buildTokenId(BigInt(labelhash(name.labels[0])));
+    } else {
+      return null;
     }
 
-    if (tokenId === null) return null;
-
-    return {
-        chainId: chainId,
-        contractAddress: registrar,
-        tokenId: tokenId
-    };
+    return buildNFTRef(registrar, token);
 }

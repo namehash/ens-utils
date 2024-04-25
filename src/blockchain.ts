@@ -1,18 +1,18 @@
-export interface BlockchainReference {
+export interface ChainId {
 
     /**
-     * Chain ID. See https://chainlist.org/
+     * Chain Id. See https://chainlist.org/
      * Always a positive integer.
      */
     chainId: number;
 };
 
-export interface BlockchainMetadata {
+export interface ChainMetadata {
 
     /**
-     * Blockchain reference.
+     * Chain Id.
      */
-    ref: BlockchainReference;
+    chain: ChainId;
 
     /**
      * Distinct chain name.
@@ -23,59 +23,63 @@ export interface BlockchainMetadata {
      * Chain name for display to end users.
      */
     displayName: string;
-}
+};
 
 /**
- * Builds a BlockchainReference object.
- * @param chainId the chain ID to reference. See https://chainid.network/
- * @returns a BlockchainReference object.
+ * Builds a ChainId object.
+ * @param maybeChainId the chain ID to reference. See https://chainid.network/
+ * @returns a ChainRef object.
  */
-export const buildBlockchainReference = (
-    chainId: number | string,
-): BlockchainReference => {
+export const buildChainId = (
+    maybeChainId: number | string,
+): ChainId => {
 
-    let chain : number;
+    let chainId : number;
 
-    if (typeof chainId === "string") {
+    if (typeof maybeChainId === "string") {
 
-        chain = Number.parseInt(chainId);
+        chainId = Number(maybeChainId);
     } else {
-        chain = chainId;
+        chainId = maybeChainId;
     }
 
-    if (Number.isNaN(chain)) {
-        throw new Error(`Invalid chain ID: ${chainId}. All chain IDs must be numbers.`);
+    if (Number.isNaN(chainId)) {
+        throw new Error(`Invalid chain ID: ${maybeChainId}. All chain IDs must be numbers.`);
     }
 
-    if (!Number.isFinite(chain)) {
-        throw new Error(`Invalid chain ID: ${chainId}. All chain IDs must be finite numbers.`);
+    if (!Number.isFinite(chainId)) {
+        throw new Error(`Invalid chain ID: ${maybeChainId}. All chain IDs must be finite numbers.`);
     }
 
-    if (!Number.isSafeInteger(chain)) {
-        throw new Error(`Invalid chain ID: ${chainId}. All chain IDs must be integers.`);
+    if (!Number.isInteger(chainId)) {
+        throw new Error(`Invalid chain ID: ${maybeChainId}. All chain IDs must be integers.`);
     }
 
-    if (chain <= 0) {
-        throw new Error(`Invalid chain ID: ${chainId}. All chain IDs must be positive integers.`);
+    if (!Number.isSafeInteger(chainId)) {
+        throw new Error(`Invalid chain ID: ${maybeChainId}. All chain IDs must be safe integers.`);
+    }
+
+    if (chainId <= 0) {
+        throw new Error(`Invalid chain ID: ${maybeChainId}. All chain IDs must be positive integers.`);
     }
 
     return {
-        chainId: chain,
+        chainId,
     };
 }
 
-let knownChains: BlockchainMetadata[] = [];
+let knownChains: ChainMetadata[] = [];
 
 /**
  * Add a chain to the list of known chains.
  * Throws an error if a chain with the same ID or name is already registered.
  */ 
 export const addKnownChain = (
-    metadata: BlockchainMetadata
+    metadata: ChainMetadata
 ): void => {
     knownChains.every(c => {
-        if (c.ref.chainId === metadata.ref.chainId) {
-            throw new Error(`Chain with ID ${metadata.ref.chainId} already registered.`);
+        if (c.chain.chainId === metadata.chain.chainId) {
+            throw new Error(`Chain with ID ${metadata.chain.chainId} already registered.`);
         }
         if (c.name === metadata.name) {
             throw new Error(`Chain with name ${metadata.name} already registered.`);
@@ -86,31 +90,34 @@ export const addKnownChain = (
 }
 
 // starting simple here
-addKnownChain({ref: buildBlockchainReference(1), name: "mainnet", displayName: "Ethereum Mainnet" });
-addKnownChain({ref: buildBlockchainReference(11155111), name: "sepolia", displayName: "Sepolia" });
+export const MAINNET = buildChainId(1);
+export const SEPOLIA = buildChainId(11155111);
+
+addKnownChain({chain: MAINNET, name: "mainnet", displayName: "Ethereum Mainnet" });
+addKnownChain({chain: SEPOLIA, name: "sepolia", displayName: "Sepolia" });
 
 /**
- * Get a blockchain by name (case-insensitive).
- * @param name name of the blockchain to get.
- * @returns A `BlockchainReference` object if the blockchain is known, otherwise `null`.
+ * Get a chain by name (case-sensitive).
+ * @param name name of the chain to get.
+ * @returns A `ChainId` object if the chain is known, otherwise throws an error.
  */
-export const getBlockchainByName = (
+export const getChainByName = (
     name: string
-): BlockchainReference | null => {
+): ChainId => {
     const chain = knownChains.find(c => c.name === name);
-    if (!chain) return null;
-    return chain.ref;
+    if (!chain) throw new Error(`Unknown chain: ${name}`);
+    return chain.chain;
 }
 
 /**
- * Get the blockchain metadata for a given reference.
- * @param ref blockchain reference to get metadata for.
- * @returns A `BlockchainMetadata` object if the blockchain is known, otherwise `null`.
+ * Get the chain metadata for a given chain.
+ * @param chainId chain to get metadata for.
+ * @returns A `ChainMetadata` object if the chain is known, otherwise throws an error.
  */
-export const getBlockchainMetadata = (
-    ref: BlockchainReference
-): BlockchainMetadata | null => {
-    const chain = knownChains.find(c => c.ref.chainId === ref.chainId);
-    if (!chain) return null;
+export const getChainMetadata = (
+    chainId: ChainId
+): ChainMetadata => {
+    const chain = knownChains.find(c => c.chain.chainId === chainId.chainId);
+    if (!chain) throw new Error(`Unknown chainId: ${chainId.chainId}`);
     return chain;
 }

@@ -1,36 +1,32 @@
-import { getAddress } from "viem";
-import { BlockchainReference, buildBlockchainReference } from "./blockchain";
+import { ChainId } from "./blockchain";
+import { Address } from "./address";
 
-export interface SmartContractReference extends BlockchainReference {
+export interface ContractRef {
+
+    /**
+     * Chain Id of the contract.
+     */
+    chain: ChainId;
 
     /**
      * Contract address
      */
-    contractAddress: `0x${string}`;
+    address: Address;
 };
 
 /**
- * Builds a SmartContractReference object.
- * @param chainId the chain ID of the smart contract. See https://chainlist.org/
- * @param contractAddress the address of the smart contract on the specified chainId.
- * @returns a SmartContractReference object.
+ * Builds a ContractRef object.
+ * @param chain the chain where the contract lives.
+ * @param address the address of the contract on the specified chain.
+ * @returns a ContractRef object.
  */
-export const buildSmartContractReference = (
-    chainId: number | string,
-    contractAddress: string,
-): SmartContractReference => {
-
-    const chain = buildBlockchainReference(chainId);
-
-    let address;
-    try {
-        address = getAddress(contractAddress, chain.chainId);
-    } catch (e) {
-        throw new Error(`Invalid address: ${contractAddress}`);
-    }
+export const buildContractRef = (
+    chain: ChainId,
+    address: Address,
+): ContractRef => {
 
     return {
-        chainId: chain.chainId,
-        contractAddress: address,
+        chain,
+        address
     };
 }
