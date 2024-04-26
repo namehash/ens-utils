@@ -2,7 +2,7 @@ import { ENSName, ETH_TLD } from "./ensname";
 import { NFTRef, TokenId, buildNFTRef, buildTokenId } from "./nft";
 import { namehash, labelhash } from 'viem/ens'
 import { buildAddress, isAddressEqual } from "./address";
-import { ChainId, MAINNET } from "./blockchain";
+import { ChainId, MAINNET } from "./chain";
 import { assert } from "vitest";
 import { ContractRef, buildContractRef } from "./contract";
 

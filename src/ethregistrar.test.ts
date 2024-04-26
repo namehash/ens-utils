@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { UNWRAPPED_MAINNET_ETH_REGISTRAR, WRAPPED_MAINNET_ETH_REGISTRAR, buildNFTRefFromENSName } from "./ethregistrar";
 import { buildENSName } from "./ensname";
-import { MAINNET, SEPOLIA, buildChainId } from "./blockchain";
+import { MAINNET, SEPOLIA } from "./chain";
 import { buildNFTRef, buildTokenId } from "./nft";
 
 // TODO: add a lot more unit tests here

@@ -1,5 +1,5 @@
 import { buildAddress } from "./address";
-import { buildChainId } from "./blockchain";
+import { buildChainId } from "./chain";
 import { ContractRef, buildContractRef } from "./contract";
 
 export interface TokenId {

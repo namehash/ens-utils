@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { MAINNET, buildChainId, getChainByName, getChainMetadata } from "./blockchain";
+import { MAINNET, buildChainId, getChainByName, getChainMetadata } from "./chain";
 
 describe("buildChainId() function", () => {
 

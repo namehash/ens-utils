@@ -2,7 +2,7 @@
 import { checksumAddress } from "viem";
 import { describe, it, expect } from "vitest";
 import { buildAddress, isAddressEqual, truncateAddress } from "./address";
-import { MAINNET } from "./blockchain";
+import { MAINNET } from "./chain";
 
 describe("buildAddress() function", () => {
     

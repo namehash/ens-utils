@@ -1,4 +1,4 @@
-import { ChainId } from "./blockchain";
+import { ChainId } from "./chain";
 import { Address } from "./address";
 
 export interface ContractRef {

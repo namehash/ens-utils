@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildContractRef } from "./contract";
-import { MAINNET } from "./blockchain";
+import { MAINNET } from "./chain";
 import { buildAddress } from "./address";
 
 describe("buildContractRef() function", () => {

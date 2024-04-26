@@ -1,5 +1,5 @@
 import { checksumAddress, isAddress } from "viem";
-import { ChainId, MAINNET } from "./blockchain";
+import { ChainId, MAINNET } from "./chain";
 
 export interface Address {
     address: `0x${string}`;

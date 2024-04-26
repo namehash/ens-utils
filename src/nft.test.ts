@@ -6,10 +6,9 @@ import {
     buildNFTReferenceFromString,
     buildTokenId,
 } from "./nft";
-import { MAINNET } from "./blockchain";
+import { MAINNET } from "./chain";
 import { buildContractRef } from "./contract";
 import { buildAddress } from "./address";
-import { build } from "tsup";
 
 describe("buildTokenId() function", () => {
 
