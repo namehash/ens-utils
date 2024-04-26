@@ -1,37 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { buildSmartContractReference } from "./contract";
+import { buildContractRef } from "./contract";
+import { MAINNET } from "./chain";
+import { buildAddress } from "./address";
 
-describe("buildSmartContractReference() function", () => {
+describe("buildContractRef() function", () => {
 
-    it("Build from string values", () => {
-        const chainId = "1";
-        const contractAddress = "0x1234567890123456789012345678901234567890";
+    it("buildContractRef", () => {
+      const address = buildAddress("0x1234567890123456789012345678901234567890");
 
-        const result = buildSmartContractReference(chainId, contractAddress);
-    
-        expect(result).toStrictEqual({
-            chainId: 1,
-            contractAddress: "0x1234567890123456789012345678901234567890",
-        });
+      const result = buildContractRef(MAINNET, address);
+  
+      expect(result).to.toStrictEqual({
+          chain: MAINNET,
+          address: address,
       });
-
-      it("Build from non-string values", () => {
-        const chainId = 1;
-        const contractAddress = "0x1234567890123456789012345678901234567890";
-
-        const result = buildSmartContractReference(chainId, contractAddress);
-    
-        expect(result).toStrictEqual({
-            chainId: 1,
-            contractAddress: "0x1234567890123456789012345678901234567890",
-        });
-      });
-
-      it("Invalid address", () => {
-        const chainId = 1;
-        const contractAddress = "x";
-
-        expect(() => buildSmartContractReference(chainId, contractAddress)).toThrow("Invalid address: x");
-      });
+    });
 
 });
