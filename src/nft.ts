@@ -88,16 +88,16 @@ export const convertNFTRefToString = (
 
 /**
  * Parses a string formatted as "chainId:contractAddress:tokenId" to a NFTRef.
- * @param nft: string - The string to parse.
+ * @param maybeNFT: string - The string to parse.
  * @returns NFTRef - The NFTRef object for the parsed string.
  */
 export const buildNFTReferenceFromString = (
-    nft: string
+    maybeNFT: string
   ): NFTRef => {
-    const parts = nft.split(":");
+    const parts = maybeNFT.split(":");
 
     if (parts.length !== 3) {
-        throw new Error(`Cannot convert: "${nft}" to NFTRef`);
+        throw new Error(`Cannot convert: "${maybeNFT}" to NFTRef`);
     }
 
     const chainId = buildChainId(parts[0]);
