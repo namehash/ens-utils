@@ -6,6 +6,6 @@ export * from "./ensname";
 export * from "./hashutils";
 export * from "./nameparser";
 export * from "./ethregistrar";
-export * from "./blockchain";
+export * from "./chain";
 export * from "./contract";
 export * from "./nft";
