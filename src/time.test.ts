@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 
-import { fromTimestampToDate, msToSeconds, now } from "./time";
+import { buildTimestamp, buildTimestampMs, fromTimestampToDate, msToSeconds, now } from "./time";
 
 describe("msToSeconds() function", () => {
-  it("Correctly returns zero for less than 1000ms params", () => {
+  it("Correctly returns 0s for less than 1000ms params", () => {
     const tests = [
       0n,
       1n,
@@ -18,26 +18,29 @@ describe("msToSeconds() function", () => {
       999n,
     ];
 
-    tests.forEach((test) => {
-      expect(msToSeconds(test)).toBe(0n);
+    tests.forEach((testMs) => {
+      const timestamp = buildTimestampMs(testMs);
+      expect(msToSeconds(timestamp).time).toBe(0n);
     });
   });
 
-  it("Correctly returns one for params between 1000ms and 1999ms", () => {
+  it("Correctly returns 1s for params between 1000ms and 1999ms", () => {
     const tests = [1000n, 1001n, 1100n, 1900n, 1999n];
 
-    tests.forEach((test) => {
-      expect(msToSeconds(test)).toBe(1n);
+    tests.forEach((testMs) => {
+      const timestamp = buildTimestampMs(testMs);
+      expect(msToSeconds(timestamp).time).toBe(1n);
     });
   });
 });
 
 describe("fromTimestampToDate() function", () => {
   it("Correctly converts UNIX timestamp to Date object", () => {
-    const tests = [{ timestamp: 0n, expectedDate: new Date(0) }];
+    const tests = [{ seconds: 0n, expectedDate: new Date(0) }];
 
-    tests.forEach(({ timestamp, expectedDate }) => {
-      expect(fromTimestampToDate(timestamp, true)).toEqual(expectedDate);
+    tests.forEach(({ seconds, expectedDate }) => {
+      const timestamp = buildTimestamp(seconds);
+      expect(fromTimestampToDate(timestamp)).toEqual(expectedDate);
     });
   });
 
@@ -49,20 +52,20 @@ describe("fromTimestampToDate() function", () => {
       Using getMinutes() to avoid false negatives due to milliseconds
       difference between the two date constants creation above.
     */
-    expect(fromTimestampToDate(nowInSeconds, true).getMinutes()).toEqual(
+    expect(fromTimestampToDate(nowInSeconds).getMinutes()).toEqual(
       new Date(nowTime).getMinutes()
     );
   });
 
   it("Handles extreme future date correctly", () => {
-    const timestamp = 32503680000n; // Year 3000
+    const timestamp = buildTimestamp(32503680000n); // Year 3000
     const expectedDate = new Date("3000-01-01T00:00:00Z").getTime();
 
     /*
       Using getMinutes() to avoid false negatives due to milliseconds
       difference between the two date constants creation above.
     */
-    expect(fromTimestampToDate(timestamp, true).getTime()).toEqual(
+    expect(fromTimestampToDate(timestamp).getTime()).toEqual(
       expectedDate
     );
   });
