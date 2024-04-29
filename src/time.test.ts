@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { buildTimestamp, buildTimestampMs, fromTimestampToDate, msToSeconds, now } from "./time";
+import { addSeconds, buildTimePeriod, buildTimestamp, buildTimestampMs, fromTimestampToDate, msToSeconds, now } from "./time";
 
 describe("msToSeconds() function", () => {
   it("Correctly returns 0s for less than 1000ms params", () => {
@@ -68,5 +68,30 @@ describe("fromTimestampToDate() function", () => {
     expect(fromTimestampToDate(timestamp).getTime()).toEqual(
       expectedDate
     );
+  });
+});
+
+describe("buildTimePeriod function", () => {
+  it("Correctly creates new TimePeriod", () => {
+    const nowTime = now();
+    const period = buildTimePeriod(nowTime, addSeconds(nowTime, 1000n));
+
+    expect(period.begin).toStrictEqual(nowTime);
+    expect(period.end).toStrictEqual(addSeconds(nowTime, 1000n));
+  });
+
+  it("Correctly creates new TimePeriod when both Timestamps are equal", () => {
+    const nowTime = now();
+    const period = buildTimePeriod(nowTime, nowTime);
+
+    expect(period.begin).toStrictEqual(nowTime);
+    expect(period.end).toStrictEqual(nowTime);
+  });
+
+  it("Throws error on smaller end Timestamp provided", () => {
+    const nowTime = now();
+    expect(() => {
+      buildTimePeriod(addSeconds(nowTime, 1000n), nowTime);
+    }).toThrow();
   });
 });
