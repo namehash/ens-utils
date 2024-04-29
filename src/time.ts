@@ -42,6 +42,10 @@ export const now = (): bigint => {
   return msToSeconds(nowMs());
 };
 
+export const addSeconds = (timestamp: Timestamp, seconds: bigint): Timestamp => {
+  return buildTimestamp(timestamp.time + seconds);
+}
+
 const shortDateFormat = "d MMM yyyy";
 
 /**
