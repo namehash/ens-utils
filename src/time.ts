@@ -198,18 +198,18 @@ export function prettyTimestampDiffFromNow(timestamp: Timestamp): string {
 }
 
 export interface TimePeriod {
-  from: Timestamp;
-  until: Timestamp; // guaranteed to always be >= from
+  begin: Timestamp;
+  end: Timestamp; // end always >= begin
 }
 
 export const buildTimePeriod = (
-  from: Timestamp,
-  until: Timestamp
+  begin: Timestamp,
+  end: Timestamp
 ): TimePeriod => {
-  if (from.time > until.time)
-    throw new Error(`Error creating TimePeriod. from ${from.time}} comes after until ${until.time}`);
+  if (begin.time > end.time)
+    throw new Error(`Error creating TimePeriod. begin ${begin.time}} comes after end ${end.time}`);
   return {
-    from,
-    until
+    begin,
+    end
   };
 };
