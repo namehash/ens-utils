@@ -15,7 +15,7 @@ export const SECONDS_PER_WEEK = 7n * SECONDS_PER_DAY; // 604,800 seconds
 export const DAYS_PER_YEAR = 365.2425; // The average Gregorian calendar year is 365.2425 days in length
 export const SECONDS_PER_YEAR = BigInt(Number(SECONDS_PER_DAY) * DAYS_PER_YEAR); // 31,556,952 seconds
 
-interface Timestamp {
+export interface Timestamp {
 
   /**
    * A Unix timestamp measured in seconds.
@@ -24,7 +24,7 @@ interface Timestamp {
   time: bigint;
 }
 
-interface TimestampMs {
+export interface TimestampMs {
 
   /**
   * A Unix timestamp measured in milliseconds.
