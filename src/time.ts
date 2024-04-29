@@ -8,12 +8,12 @@ import {
 
 import { bigIntToNumber } from "./number";
 
-export const SECONDS_PER_YEAR = 31556952;
-
-export const ONE_MINUTE_IN_SECONDS = 60n;
-export const ONE_HOUR_IN_SECONDS = 60n * ONE_MINUTE_IN_SECONDS;
-export const ONE_DAY_IN_SECONDS = 24n * ONE_HOUR_IN_SECONDS;
-export const ONE_WEEK_IN_SECONDS = 7n * ONE_DAY_IN_SECONDS;
+export const SECONDS_PER_MINUTE = 60n;
+export const SECONDS_PER_HOUR = 60n * SECONDS_PER_MINUTE; // 3,600 seconds
+export const SECONDS_PER_DAY = 24n * SECONDS_PER_HOUR; // 86,400 seconds
+export const SECONDS_PER_WEEK = 7n * SECONDS_PER_DAY; // 604,800 seconds
+export const DAYS_PER_YEAR = 365.2425; // The average Gregorian calendar year is 365.2425 days in length
+export const SECONDS_PER_YEAR = BigInt(Number(SECONDS_PER_DAY) * DAYS_PER_YEAR); // 31,556,952 seconds
 
 /**
  * Converts milliseconds to seconds.
