@@ -148,7 +148,7 @@ export const relativeTimestamp = (
  * @returns string - The date formatted as a short string.
  */
 export const getShortTimestampFormat = (timestamp: Timestamp): string => {
-  return format(bigIntToNumber(timestamp.time), shortDateFormat);
+  return format(fromTimestampToDate(timestamp), shortDateFormat);
 };
 
 /**
