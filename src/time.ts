@@ -113,6 +113,18 @@ export const fromTimestampMsToDate = (
   return new Date(Number(timestamp.timeMs));
 };
 
+export const buildTimestampMsFromDate = (
+  date: Date
+): TimestampMs => {
+  return buildTimestampMs(BigInt(date.getTime()));
+}
+
+export const buildTimestampFromDate = (
+  date: Date
+): Timestamp => {
+  return msToSeconds(buildTimestampMsFromDate(date));
+}
+
 /**
  * Formats a Timestamp to a string that represents the relative distance to now, optionally with a suffix.
  * @param timestamp: The Timestamp to format.
