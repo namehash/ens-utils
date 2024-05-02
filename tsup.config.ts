@@ -15,7 +15,7 @@ export default defineConfig({
     "safari17",
     "node20",
   ],
-  format: ["esm"],
+  format: ["esm", "cjs"],
   skipNodeModulesBundle: true,
   external: ["node_modules"],
 });
