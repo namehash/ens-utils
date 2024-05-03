@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { addSeconds, buildTimePeriod, buildTimestamp, buildTimestampMs, buildDateFromTimestamp, timestampMsToTimestamp, now, buildTimestampFromDate, buildDuration, isOverlappingTimestamp, subtractSeconds, formatTimestamp, FormatTimestampOptions, formatTimestampAsDistance, formatTimestampAsDistanceToNow } from "./time";
+import { addSeconds, buildTimePeriod, buildTimestamp, buildTimestampMs, buildDateFromTimestamp, timestampMsToTimestamp, now, buildTimestampFromDate, buildDuration, isOverlappingTimestamp, subtractSeconds, formatTimestamp, FormatTimestampOptions, formatTimestampAsDistance, formatTimestampAsDistanceToNow, scaleDuration, SECONDS_PER_DAY, DAYS_PER_YEAR } from "./time";
 
 describe("timestampMsToTimestamp() function", () => {
   it("Correctly returns 0s for less than 1000ms params", () => {
@@ -57,6 +57,77 @@ describe("buildDuration() function", () => {
 
     expect(() => {buildDuration(seconds)}).toThrow();
   });
+});
+
+describe("scaleDuration() function", () => {
+    
+  it("throws when scaled by a negative number", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = -1;
+    
+    expect(() => {scaleDuration(duration, scalar)}).toThrow();
+  });
+
+  it("throws when scaled by an invalid number", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = Infinity;
+    
+    expect(() => {scaleDuration(duration, scalar)}).toThrow();
+  });
+
+  it("scale by 0n", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 0n;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(0n);
+  });
+
+  it("scale by 0", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 0;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(0n);
+  });
+
+  it("scale by 1000n", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 1000n;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(1000000n);
+  });
+
+  it("scale by 1000", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 1000;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(1000000n);
+  });
+
+  it("scale by fractional scalar", () => {
+
+    const duration = SECONDS_PER_DAY;
+    const scalar = DAYS_PER_YEAR;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(31556952n);
+  });
+
 });
 
 describe("addSeconds() function", () => {
@@ -119,12 +190,12 @@ describe("subtractSeconds() function", () => {
 
 describe("formatTimestamp() function", () => {
     
-  it("hideTime - UTC - 1 digit day", () => {
+  it("showDateOnly - UTC - 1 digit day", () => {
       const date = new Date("2024-01-02T23:59:59Z");
       const timestamp = buildTimestampFromDate(date);
       const options : FormatTimestampOptions = {
         timeZone: "UTC",
-        showTime: false,
+        showDateOnly: true,
       }
 
       const result = formatTimestamp(timestamp, options);
@@ -132,12 +203,12 @@ describe("formatTimestamp() function", () => {
       expect(result).toStrictEqual("Jan 2, 2024");
   });
 
-  it("hideTime - UTC - 2 digit day", () => {
+  it("showDateOnly - UTC - 2 digit day", () => {
     const date = new Date("2024-01-31T23:59:59Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: false,
+      showDateOnly: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -145,12 +216,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024");
   });
 
-  it("showTime - UTC - 2 digit hour and minute PM", () => {
+  it("UTC - 2 digit hour and minute PM", () => {
     const date = new Date("2024-01-31T23:59:59Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -158,12 +228,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 11:59 PM");
   });
 
-  it("showTime - UTC - 1 digit hour and minute AM", () => {
+  it("UTC - 1 digit hour and minute AM", () => {
     const date = new Date("2024-01-31T01:01:01Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -171,12 +240,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 1:01 AM");
   });
 
-  it("showTime - UTC - midnight", () => {
+  it("UTC - midnight", () => {
     const date = new Date("2024-01-31T00:00:00Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -184,12 +252,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 12:00 AM");
   });
 
-  it("showTime - UTC - noon", () => {
+  it("UTC - noon", () => {
     const date = new Date("2024-01-31T12:00:00Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -197,11 +264,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 12:00 PM");
   });
 
-  it("hideTime - custom time zone", () => {
+  it("showDateOnly - custom time zone", () => {
     const date = new Date("2024-01-31T23:59:59Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
-      showTime: false,
+      showDateOnly: true,
       timeZone: "Asia/Dubai",
     }
 
@@ -212,11 +279,11 @@ describe("formatTimestamp() function", () => {
 
   // // TODO: build a more generic version of this unit test that works in any system default time zone
   // // NOTE: commenting this out as it is currently system dependent. Verified it works in my current time zone.
-  // it("hideTime - system default time zone", () => {
+  // it("showDateOnly - system default time zone", () => {
   //   const date = new Date("2024-01-31T23:59:59Z");
   //   const timestamp = buildTimestampFromDate(date);
   //   const options : FormatTimestampOptions = {
-  //     showTime: false,
+  //     showDateOnly: true,
   //   }
 
   //   const result = formatTimestamp(timestamp, options);
@@ -232,7 +299,7 @@ describe("formatTimestamp() function", () => {
 
   //   const result = formatTimestamp(timestamp);
 
-  //   expect(result).toStrictEqual("Feb 1, 2024");
+  //   expect(result).toStrictEqual("Feb 1, 2024, 3:59 AM");
   // });
 
   // // TODO: build a more generic version of this unit test that works in any system default time zone.
@@ -244,7 +311,7 @@ describe("formatTimestamp() function", () => {
 
   //   const result = formatTimestamp(timestamp, options);
 
-  //   expect(result).toStrictEqual("Feb 1, 2024");
+  //   expect(result).toStrictEqual("Feb 1, 2024, 3:59 AM");
   // });
 
   it("invalid timezone", () => {
@@ -271,7 +338,7 @@ describe("formatTimestamp() function", () => {
     const date = new Date("2024-01-01T01:01:01Z");
     const timestamp = buildTimestampFromDate(date);
 
-    const result = formatTimestamp(timestamp, {showTime: true, timeZone: "UTC", locale: "ja-JP"});
+    const result = formatTimestamp(timestamp, {timeZone: "UTC", locale: "ja-JP"});
 
     expect(result).toStrictEqual("2024年1月1日 1:01");
   });
