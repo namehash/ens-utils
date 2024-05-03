@@ -1,38 +1,64 @@
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInWeeks,
-  format,
-  formatDistanceToNow,
-} from "date-fns";
+import { formatDistanceStrict } from "date-fns";
+import { enUS } from 'date-fns/locale';
 
-import { bigIntToNumber } from "./number";
-
+export const MILLISECONDS_PER_SECOND = 1000n;
 export const SECONDS_PER_MINUTE = 60n;
-export const SECONDS_PER_HOUR = 60n * SECONDS_PER_MINUTE; // 3,600 seconds
-export const SECONDS_PER_DAY = 24n * SECONDS_PER_HOUR; // 86,400 seconds
-export const SECONDS_PER_WEEK = 7n * SECONDS_PER_DAY; // 604,800 seconds
-export const DAYS_PER_YEAR = 365.2425; // The average Gregorian calendar year is 365.2425 days in length
-export const SECONDS_PER_YEAR = BigInt(Number(SECONDS_PER_DAY) * DAYS_PER_YEAR); // 31,556,952 seconds
 
+/**
+ * 3,600n seconds
+ */
+export const SECONDS_PER_HOUR = 60n * SECONDS_PER_MINUTE;
+
+/**
+ * 86,400n seconds
+ */
+export const SECONDS_PER_DAY = 24n * SECONDS_PER_HOUR;
+
+/**
+ * 604,800n seconds
+ */
+export const SECONDS_PER_WEEK = 7n * SECONDS_PER_DAY;
+
+/**
+ * The average Gregorian calendar year is 365.2425 days in length
+ */
+export const DAYS_PER_YEAR = 365.2425;
+
+/**
+ * 31,556,952n seconds
+ */
+export const SECONDS_PER_YEAR = BigInt(Number(SECONDS_PER_DAY) * DAYS_PER_YEAR);
+
+/**
+ * A moment in time measured in seconds.
+ */
 export interface Timestamp {
 
   /**
    * A Unix timestamp measured in seconds.
-   * May be negative to represent a date before the Unix epoch.
+   * May be negative to represent a time before the Unix epoch.
    */
   time: bigint;
 }
 
+/**
+ * A moment in time measured in milliseconds.
+ */
 export interface TimestampMs {
 
   /**
   * A Unix timestamp measured in milliseconds.
-  * May be negative to represent a date before the Unix epoch.
+  * May be negative to represent a time before the Unix epoch.
   */
   timeMs: bigint;
 }
 
+/**
+ * Builds a Timestamp.
+ * 
+ * @param secondsSinceUnixEpoch The number of seconds since the Unix epoch.
+ * @returns The resulting Timestamp.
+ */
 export const buildTimestamp = (
   secondsSinceUnixEpoch: bigint,
 ): Timestamp => {
@@ -41,6 +67,12 @@ export const buildTimestamp = (
   };
 };
 
+/**
+ * Builds a TimestampMs.
+ * 
+ * @param millisecondsSinceUnixEpoch The number of milliseconds since the Unix epoch.
+ * @returns The resulting TimestampMs.
+ */
 export const buildTimestampMs = (
   millisecondsSinceUnixEpoch: bigint,
 ): TimestampMs => {
@@ -50,178 +82,361 @@ export const buildTimestampMs = (
 };
 
 /**
- * Converts milliseconds to seconds.
- * @param ms: The milliseconds to convert.
- * @returns The converted time in seconds.
+ * Converts a TimestampMs to a Timestamp.
+ * 
+ * Fractional seconds are truncated.
+ * 
+ * @param ms The TimestampMs to convert.
+ * @returns The converted Timestamp.
  */
-export const msToSeconds = (ms: TimestampMs): Timestamp => {
-  return buildTimestamp(ms.timeMs / 1000n);
+export const timestampMsToTimestamp = (ms: TimestampMs): Timestamp => {
+  return buildTimestamp(ms.timeMs / MILLISECONDS_PER_SECOND);
 };
 
 /**
- * Converts seconds to milliseconds.
- * @param seconds The seconds to convert.
- * @returns The converted time in milliseconds.
+ * Converts a Timestamp to a TimestampMs.
+ * 
+ * @param seconds The Timestamp to convert.
+ * @returns The converted TimestampMs.
  */
-export const secondsToMs = (seconds: Timestamp): TimestampMs => {
-  return buildTimestampMs(seconds.time * 1000n);
+export const timestampToTimestampMs = (seconds: Timestamp): TimestampMs => {
+  return buildTimestampMs(seconds.time * MILLISECONDS_PER_SECOND);
 }
 
 /**
- * Retrieves the current time in millisceonds.
- * @returns bigint - The current timestamp in millisceonds.
+ * Builds a Timestamp from a Date.
+ * 
+ * @param timestamp The Timestamp to convert.
+ * @returns The converted Date object.
  */
-export const nowMs = (): TimestampMs => {
-  // Returns the current time in milliseconds as a BigInt
-  return buildTimestampMs(BigInt(Date.now()));
-};
-
-/**
- * Retrieves the current time in seconds.
- * @returns The current timestamp in seconds.
- */
-export const now = (): Timestamp => {
-  // Returns the current time in seconds as a BigInt
-  return msToSeconds(nowMs());
-};
-
-export const addSeconds = (timestamp: Timestamp, seconds: bigint): Timestamp => {
-  return buildTimestamp(timestamp.time + seconds);
-}
-
-const shortDateFormat = "d MMM yyyy";
-
-/**
- * Converts from a Timestamp to a Date
- * @param timestamp the Timestamp to convert
- * @returns Date - the converted Date object
- */
-export const fromTimestampToDate = (
+export const buildDateFromTimestamp = (
   timestamp: Timestamp
 ): Date => {
-  return fromTimestampMsToDate(secondsToMs(timestamp));
+  return buildDateFromTimestampMs(timestampToTimestampMs(timestamp));
 };
 
 /**
- * Converts from a TimestampMs to a Date
- * @param timestamp the TimestampMs to convert
- * @returns The converted Date object
+ * Builds a TimestampMs from a Date.
+ * 
+ * @param timestamp The TimestampMs to convert.
+ * @returns The converted Date object.
  */
-export const fromTimestampMsToDate = (
+export const buildDateFromTimestampMs = (
   timestamp: TimestampMs
 ): Date => {
   return new Date(Number(timestamp.timeMs));
 };
 
+/**
+ * Converts a Date to a TimestampMs.
+ * 
+ * @param date The Date to convert.
+ * @returns The converted TimestampMs.
+ */
 export const buildTimestampMsFromDate = (
   date: Date
 ): TimestampMs => {
   return buildTimestampMs(BigInt(date.getTime()));
 }
 
+/**
+ * Converts a Date to a Timestamp.
+ * 
+ * @param date The Date to convert.
+ * @returns The converted Timestamp.
+ */
 export const buildTimestampFromDate = (
   date: Date
 ): Timestamp => {
-  return msToSeconds(buildTimestampMsFromDate(date));
+  return timestampMsToTimestamp(buildTimestampMsFromDate(date));
 }
 
 /**
- * Formats a Timestamp to a string that represents the relative distance to now, optionally with a suffix.
- * @param timestamp: The Timestamp to format.
- * @param addSuffix: boolean = true - Whether to add a suffix to the formatted string.
- * @returns string - The formatted distance string.
+ * Returns the current time in milliseconds.
+ * 
+ * @returns - The current TimestampMs in millisceonds.
  */
-export const relativeTimestamp = (
-  timestamp: Timestamp,
-  addSuffix = true
-): string => {
-  const result = formatDistanceToNow(fromTimestampToDate(timestamp), {
-    addSuffix: addSuffix,
-  });
-
-  return result.replace("about ", "").replace("over ", "");
+export const nowMs = (): TimestampMs => {
+  return buildTimestampMs(BigInt(Date.now()));
 };
 
 /**
- * Formats a Timestamp into a short date format.
- * @param timestamp: The Timestamp to format.
- * @returns string - The date formatted as a short string.
+ * Returns the current time in seconds.
+ * 
+ * @returns - The current Timestamp in seconds.
  */
-export const getShortTimestampFormat = (timestamp: Timestamp): string => {
-  return format(fromTimestampToDate(timestamp), shortDateFormat);
+export const now = (): Timestamp => {
+  return timestampMsToTimestamp(nowMs());
 };
 
 /**
- * Provides a description of a Timestamp, formatted either as a relative distance to now or as a short date.
- * @param timestamp: The Timestamp to describe.
- * @param showAsDistance: boolean - Flag to indicate if the Timestamp should be shown as a distance from now.
- * @param withSufix: boolean = true - Flag to include a suffix in the distance description.
- * @returns string - A string description of the Timestamp.
+ * A Duration represents a length of time in seconds.
  */
-export const getTimestampDescription = (
-  timestamp: Timestamp,
-  showAsDistance: boolean,
-  withSufix = true
-): string => {
-  return showAsDistance
-    ? relativeTimestamp(timestamp, withSufix)
-    : getShortTimestampFormat(timestamp);
+export interface Duration {
+
+  /**
+   * The number of seconds in the Duration.
+   * Must be non-negative.
+   */
+  seconds: bigint;
+}
+
+/**
+ * Builds a Duration.
+ * 
+ * @param seconds - The number of seconds in the Duration.
+ * @returns The resulting Duration.
+ */
+export const buildDuration = (
+  seconds: bigint
+): Duration => {
+  if (seconds < 0n)
+    throw new Error(`Error in buildDuration. seconds ${seconds}} is less than 0.`);
+
+  return {
+    seconds
+  };
 };
 
 /**
- * Converts a Timestamp into a formatted string representing local date and time.
- * @param timestamp: The Timestamp to format.
- * @returns string - The localized and formatted date and time string.
+ * Builds a new Timestamp that is incremented by the provided Duration.
+ * 
+ * @param timestamp - The Timestamp to increment.
+ * @param seconds - The Duration to increment the Timestamp by.
+ * @returns A new Timestamp that is the result of incrementing the provided Timestamp by the provided Duration.
  */
-export const getFormattedTimestamp = (timestamp: Timestamp): string => {
-  const formattedDate = fromTimestampToDate(timestamp);
-
-  return formattedDate.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
+export const addSeconds = (timestamp: Timestamp, seconds: Duration): Timestamp => {
+  return buildTimestamp(timestamp.time + seconds.seconds);
+}
 
 /**
- * Returns a pretty string representing the difference between a timestamp and now
- * @param timestamp
- * @returns string
+ * Builds a new Timestamp that is decrremented by the provided Duration.
+ * 
+ * @param timestamp - The Timestamp to decrement.
+ * @param seconds - The Duration to decrement the Timestamp by.
+ * @returns A new Timestamp that is the result of decrementing the provided Timestamp by the provided Duration.
  */
-export function prettyTimestampDiffFromNow(timestamp: Timestamp): string {
-  const date = fromTimestampToDate(timestamp);
-  const nowTime = new Date();
+export const subtractSeconds = (timestamp: Timestamp, seconds: Duration): Timestamp => {
+  return buildTimestamp(timestamp.time - seconds.seconds);
+}
 
-  const diffWeeks = differenceInWeeks(date, nowTime);
-  const diffDays = differenceInDays(date, nowTime);
-  const diffHours = differenceInHours(date, nowTime);
+export interface FormatTimestampOptions {
 
-  if (diffWeeks > 0) {
-    return `${diffWeeks} week${diffWeeks > 1 ? "s" : ""}`;
-  } else if (diffDays > 0) {
-    return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
-  } else if (diffHours > 0) {
-    return `${diffHours} hour${diffHours > 1 ? "s" : ""}`;
+  /**
+   * Optional. Identifies if the output should show the date and time, or only date.
+   * If not provided, the output will only show the date.
+   */
+  showTime?: boolean;
+
+  /**
+   * Optional. The name of the time zone to use for the conversion.
+   * If not provided, the system time zone is used.
+   * If provided, must be a valid IANA time zone identifier.
+   * Read more about valid IANA time zone identifiers here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+   */
+  timeZone?: string;
+
+  /**
+   * Optional. Identifies the locale to use for the output.
+   * If not provided, the output will be in the en-US locale.
+   * If not recognized, the output will be the system's default locale.
+   */
+  locale?: string;
+}
+
+const getSystemTimeZone = (): string => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+const DEFAULT_LOCALE = "en-US";
+
+/**
+ * Formats a Timestamp as string.
+ * 
+ * @param timestamp The Timestamp to format.
+ * @param options Optional. The options for how to format the Timestamp.
+ * @returns The formatted Timestamp.
+ * @throws RangeError if options.timeZone is provided but is not a valid IANA time zone identifier.
+ * @throws RangeError if options.locales is provided but is not a syntactically valid.
+ * @example date only
+    const timestamp = buildTimestampFromDate(new Date("2024-01-01T01:01:01Z"));
+    formatTimestamp(timestamp);
+    // "Jan 1, 2024" (assuming the system time zone is UTC)
+ * 
+ * @example date and time
+    const timestamp = buildTimestampFromDate(new Date("2024-01-01T01:01:01Z"));
+    formatTimestamp(timestamp, { showTime: true });
+    // "Jan 1, 2024, 1:01 AM" (assuming the system time zone is UTC)
+ */
+export const formatTimestamp = (timestamp: Timestamp, options?: FormatTimestampOptions): string => {
+
+  const date = buildDateFromTimestamp(timestamp);
+
+  let timeZone: string;
+  if (!options || !options.timeZone) {
+    timeZone = getSystemTimeZone();
   } else {
-    return "less than an hour";
+    timeZone = options.timeZone;
   }
-}
 
+  let formatOptions: Intl.DateTimeFormatOptions;
+  if (!options || options.showTime === undefined || !options.showTime) {
+    // hide time by default
+    formatOptions = {
+      day: 'numeric',       // Single-digit day
+      month: 'short',       // Three-letter month
+      year: 'numeric',      // Four-digit year
+      timeZone: timeZone,
+    };
+  } else {
+    formatOptions = {
+      day: 'numeric',       // Single-digit day
+      month: 'short',       // Three-letter month
+      year: 'numeric',      // Four-digit year
+      hour: 'numeric',      // Single-digit hour
+      minute: 'numeric',    // Two-digit minute
+      timeZone: timeZone,
+    };
+  }
+
+  let locale : string;
+  if (!options || !options.locale) {
+    locale = DEFAULT_LOCALE;
+  } else {
+    locale = options.locale;
+  }
+
+  const formatter = new Intl.DateTimeFormat(locale, formatOptions);
+  return formatter.format(date);
+};
+
+/**
+ * Return the distance between the given Timestamps in words.
+ *
+ * | Distance           | Result              |
+ * |--------------------|---------------------|
+ * | -1 ... -N years    | [1..N] years ago    |
+ * | -1 ... -11 months  | [1..11] months ago  |
+ * | -1 ... -29 days    | [1..29] days ago    |
+ * | -1 ... -23 hours   | [1..23] hours ago   |
+ * | -1 ... -59 minutes | [1..59] minutes ago |
+ * | -1 ... -59 seconds | [1..59] seconds ago |
+ * | 0 seconds          | now                 |
+ * | 1 ... 59 seconds   | in [1..59] seconds  |
+ * | 1 ... 59 minutes   | in [1..59] minutes  |
+ * | 1 ... 23 hours     | in [1..23] hours    |
+ * | 1 ... 29 days      | in [1..29] days     |
+ * | 1 ... 11 months    | in [1..11] months   |
+ * | 1 ... N years      | in [1..N] years     |
+ * 
+ * Plurals are used as needed in the output.
+ * The output locale is always en-US.
+ * Distances are rounded down to the nearest whole unit.
+ * 
+ * @param timestamp The Timestamp to format.
+ * @param baseTimestamp The Timestamp to use as the base for the distance calculation.
+ * @returns The distance between the given Timestamps in words.
+ *
+ */
+export const formatTimestampAsDistance = (
+  timestamp: Timestamp,
+  baseTimestamp: Timestamp,
+): string => {
+  if (timestamp.time === baseTimestamp.time) {
+    // "0 seconds ago" is not so nice, so override that case to "now".
+    return "now";
+  }
+  return formatDistanceStrict(
+    buildDateFromTimestamp(timestamp),
+    buildDateFromTimestamp(baseTimestamp),
+    {
+      addSuffix: true,
+      locale: enUS,
+      roundingMethod: "floor",
+    },
+  );
+};
+
+/**
+ * Return the distance between the given Timestamp and now in words.
+ *
+ * | Distance from now  | Result              |
+ * |--------------------|---------------------|
+ * | -1 ... -N years    | [1..N] years ago    |
+ * | -1 ... -11 months  | [1..11] months ago  |
+ * | -1 ... -29 days    | [1..29] days ago    |
+ * | -1 ... -23 hours   | [1..23] hours ago   |
+ * | -1 ... -59 minutes | [1..59] minutes ago |
+ * | -1 ... -59 seconds | [1..59] seconds ago |
+ * | 0 seconds          | now                 |
+ * | 1 ... 59 seconds   | in [1..59] seconds  |
+ * | 1 ... 59 minutes   | in [1..59] minutes  |
+ * | 1 ... 23 hours     | in [1..23] hours    |
+ * | 1 ... 29 days      | in [1..29] days     |
+ * | 1 ... 11 months    | in [1..11] months   |
+ * | 1 ... N years      | in [1..N] years     |
+ * 
+ * Plurals are used as needed in the output.
+ * The output locale is always en-US.
+ * Distances are rounded down to the nearest whole unit.
+ * 
+ * @param timestamp The Timestamp to format.
+ * @returns The distance between the given Timestamp and now in words.
+ *
+ */
+export const formatTimestampAsDistanceToNow = (
+  timestamp: Timestamp,
+): string => {
+  return formatTimestampAsDistance(timestamp, now());
+};
+
+/**
+ * A TimePeriod represents a range of time between two Timestamps.
+ * All TimePeriod are inclusive, meaning that the beginning and end Timestamps are included in the range.
+ * The begin Timestamp is always before or the same as the end Timestamp.
+ * A TimePeriod may be a single point in time if the begin and end Timestamps are equal.
+ */
 export interface TimePeriod {
+
+  /**
+   * The beginning of the TimePeriod.
+   */
   begin: Timestamp;
-  end: Timestamp; // end always >= begin
+
+  /**
+   * The end of the TimePeriod.
+   * Always after or the same as begin.
+   */
+  end: Timestamp;
 }
 
+/**
+ * Builds a TimePeriod.
+ * 
+ * @param begin - The beginning of the TimePeriod.
+ * @param end - The end of the TimePeriod.
+ * @returns The resulting TimePeriod.
+ * @throws Error if begin is after end.
+ */
 export const buildTimePeriod = (
   begin: Timestamp,
   end: Timestamp
 ): TimePeriod => {
   if (begin.time > end.time)
-    throw new Error(`Error creating TimePeriod. begin ${begin.time}} comes after end ${end.time}`);
+    throw new Error(`Error in buildTimePeriod. begin ${buildDateFromTimestamp(begin)}} comes after end ${buildDateFromTimestamp(end)}.`);
   return {
     begin,
     end
   };
 };
+
+/**
+ * Identifies if the given Timestamp is within the given TimePeriod (inclusive).
+ * 
+ * @param period - The TimePeriod to check.
+ * @param timestamp - The Timestamp to check.
+ * @returns true if the Timestamp is within the TimePeriod, otherwise false.
+ */
+export const isOverlappingTimestamp = (period: TimePeriod, timestamp: Timestamp): boolean => {
+  return period.begin.time <= timestamp.time && timestamp.time <= period.end.time;
+}
