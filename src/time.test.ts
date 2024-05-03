@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { addSeconds, buildTimePeriod, buildTimestamp, buildTimestampMs, buildDateFromTimestamp, timestampMsToTimestamp, now, buildTimestampFromDate, buildDuration, isOverlappingTimestamp, subtractSeconds, formatTimestamp, FormatTimestampOptions, formatTimestampAsDistance, formatTimestampAsDistanceToNow } from "./time";
+import { addSeconds, buildTimePeriod, buildTimestamp, buildTimestampMs, buildDateFromTimestamp, timestampMsToTimestamp, now, buildTimestampFromDate, buildDuration, isOverlappingTimestamp, subtractSeconds, formatTimestamp, FormatTimestampOptions, formatTimestampAsDistance, formatTimestampAsDistanceToNow, scaleDuration, SECONDS_PER_DAY, DAYS_PER_YEAR } from "./time";
 
 describe("timestampMsToTimestamp() function", () => {
   it("Correctly returns 0s for less than 1000ms params", () => {
@@ -57,6 +57,77 @@ describe("buildDuration() function", () => {
 
     expect(() => {buildDuration(seconds)}).toThrow();
   });
+});
+
+describe("scaleDuration() function", () => {
+    
+  it("throws when scaled by a negative number", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = -1;
+    
+    expect(() => {scaleDuration(duration, scalar)}).toThrow();
+  });
+
+  it("throws when scaled by an invalid number", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = Infinity;
+    
+    expect(() => {scaleDuration(duration, scalar)}).toThrow();
+  });
+
+  it("scale by 0n", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 0n;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(0n);
+  });
+
+  it("scale by 0", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 0;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(0n);
+  });
+
+  it("scale by 1000n", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 1000n;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(1000000n);
+  });
+
+  it("scale by 1000", () => {
+
+    const seconds = 1000n;
+    const duration = buildDuration(seconds);
+    const scalar = 1000;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(1000000n);
+  });
+
+  it("scale by fractional scalar", () => {
+
+    const duration = SECONDS_PER_DAY;
+    const scalar = DAYS_PER_YEAR;
+    const result = scaleDuration(duration, scalar);
+    
+    expect(result.seconds).toStrictEqual(31556952n);
+  });
+
 });
 
 describe("addSeconds() function", () => {

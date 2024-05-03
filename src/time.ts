@@ -1,23 +1,89 @@
 import { formatDistanceStrict } from "date-fns";
 import { enUS } from 'date-fns/locale';
 
+/**
+ * A Duration represents a length of time in seconds.
+ */
+export interface Duration {
+
+  /**
+   * The number of seconds in the Duration.
+   * Must be non-negative.
+   */
+  seconds: bigint;
+}
+
+/**
+ * Builds a Duration.
+ * 
+ * @param seconds - The number of seconds in the Duration.
+ * @returns The resulting Duration.
+ */
+export const buildDuration = (
+  seconds: bigint
+): Duration => {
+  if (seconds < 0n)
+    throw new Error(`Error in buildDuration. seconds ${seconds}} is less than 0.`);
+
+  return {
+    seconds
+  };
+};
+
+/**
+ * Scales a Duration by the given scalar.
+ * 
+ * @param duration The Duration to scale.
+ * @param scalar The scalar to scale the Duration by.
+ * @returns The scaled Duration.
+ * @throws If scalar is negative.
+ * @throws If scalar is of type number and cannot be converted to bigint.
+ */
+export const scaleDuration = (
+  duration: Duration,
+  scalar: bigint | number
+): Duration => {
+  
+  let newSeconds: bigint;
+
+  if (typeof scalar === 'number') {
+    try {
+      newSeconds = BigInt(Number(duration.seconds) * scalar);
+    } catch (error) {
+      throw new Error(`Error in scaleDuration. scalar ${scalar}} is not a valid number.`);
+    }
+  } else {
+    newSeconds = duration.seconds * scalar;
+  }
+
+  if (newSeconds < 0n) {
+    throw new Error(`Error in scaleDuration. scalar ${scalar}} must be a non-negative number.`);
+  }
+
+  return buildDuration(newSeconds);
+}
+
 export const MILLISECONDS_PER_SECOND = 1000n;
-export const SECONDS_PER_MINUTE = 60n;
+
+/**
+ * 60n seconds
+ */
+export const SECONDS_PER_MINUTE = buildDuration(60n);
 
 /**
  * 3,600n seconds
  */
-export const SECONDS_PER_HOUR = 60n * SECONDS_PER_MINUTE;
+export const SECONDS_PER_HOUR = scaleDuration(SECONDS_PER_MINUTE, 60n);
 
 /**
  * 86,400n seconds
  */
-export const SECONDS_PER_DAY = 24n * SECONDS_PER_HOUR;
+export const SECONDS_PER_DAY = scaleDuration(SECONDS_PER_HOUR, 24n);
 
 /**
  * 604,800n seconds
  */
-export const SECONDS_PER_WEEK = 7n * SECONDS_PER_DAY;
+export const SECONDS_PER_WEEK = scaleDuration(SECONDS_PER_DAY, 7n);
 
 /**
  * The average Gregorian calendar year is 365.2425 days in length
@@ -27,7 +93,7 @@ export const DAYS_PER_YEAR = 365.2425;
 /**
  * 31,556,952n seconds
  */
-export const SECONDS_PER_YEAR = BigInt(Number(SECONDS_PER_DAY) * DAYS_PER_YEAR);
+export const SECONDS_PER_YEAR = scaleDuration(SECONDS_PER_DAY, DAYS_PER_YEAR);
 
 /**
  * A moment in time measured in seconds.
@@ -167,35 +233,6 @@ export const nowMs = (): TimestampMs => {
  */
 export const now = (): Timestamp => {
   return timestampMsToTimestamp(nowMs());
-};
-
-/**
- * A Duration represents a length of time in seconds.
- */
-export interface Duration {
-
-  /**
-   * The number of seconds in the Duration.
-   * Must be non-negative.
-   */
-  seconds: bigint;
-}
-
-/**
- * Builds a Duration.
- * 
- * @param seconds - The number of seconds in the Duration.
- * @returns The resulting Duration.
- */
-export const buildDuration = (
-  seconds: bigint
-): Duration => {
-  if (seconds < 0n)
-    throw new Error(`Error in buildDuration. seconds ${seconds}} is less than 0.`);
-
-  return {
-    seconds
-  };
 };
 
 /**
