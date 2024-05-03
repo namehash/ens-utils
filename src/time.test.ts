@@ -119,12 +119,12 @@ describe("subtractSeconds() function", () => {
 
 describe("formatTimestamp() function", () => {
     
-  it("hideTime - UTC - 1 digit day", () => {
+  it("showDateOnly - UTC - 1 digit day", () => {
       const date = new Date("2024-01-02T23:59:59Z");
       const timestamp = buildTimestampFromDate(date);
       const options : FormatTimestampOptions = {
         timeZone: "UTC",
-        showTime: false,
+        showDateOnly: true,
       }
 
       const result = formatTimestamp(timestamp, options);
@@ -132,12 +132,12 @@ describe("formatTimestamp() function", () => {
       expect(result).toStrictEqual("Jan 2, 2024");
   });
 
-  it("hideTime - UTC - 2 digit day", () => {
+  it("showDateOnly - UTC - 2 digit day", () => {
     const date = new Date("2024-01-31T23:59:59Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: false,
+      showDateOnly: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -145,12 +145,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024");
   });
 
-  it("showTime - UTC - 2 digit hour and minute PM", () => {
+  it("UTC - 2 digit hour and minute PM", () => {
     const date = new Date("2024-01-31T23:59:59Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -158,12 +157,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 11:59 PM");
   });
 
-  it("showTime - UTC - 1 digit hour and minute AM", () => {
+  it("UTC - 1 digit hour and minute AM", () => {
     const date = new Date("2024-01-31T01:01:01Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -171,12 +169,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 1:01 AM");
   });
 
-  it("showTime - UTC - midnight", () => {
+  it("UTC - midnight", () => {
     const date = new Date("2024-01-31T00:00:00Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -184,12 +181,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 12:00 AM");
   });
 
-  it("showTime - UTC - noon", () => {
+  it("UTC - noon", () => {
     const date = new Date("2024-01-31T12:00:00Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
       timeZone: "UTC",
-      showTime: true,
     }
 
     const result = formatTimestamp(timestamp, options);
@@ -197,11 +193,11 @@ describe("formatTimestamp() function", () => {
     expect(result).toStrictEqual("Jan 31, 2024, 12:00 PM");
   });
 
-  it("hideTime - custom time zone", () => {
+  it("showDateOnly - custom time zone", () => {
     const date = new Date("2024-01-31T23:59:59Z");
     const timestamp = buildTimestampFromDate(date);
     const options : FormatTimestampOptions = {
-      showTime: false,
+      showDateOnly: true,
       timeZone: "Asia/Dubai",
     }
 
@@ -212,11 +208,11 @@ describe("formatTimestamp() function", () => {
 
   // // TODO: build a more generic version of this unit test that works in any system default time zone
   // // NOTE: commenting this out as it is currently system dependent. Verified it works in my current time zone.
-  // it("hideTime - system default time zone", () => {
+  // it("showDateOnly - system default time zone", () => {
   //   const date = new Date("2024-01-31T23:59:59Z");
   //   const timestamp = buildTimestampFromDate(date);
   //   const options : FormatTimestampOptions = {
-  //     showTime: false,
+  //     showDateOnly: true,
   //   }
 
   //   const result = formatTimestamp(timestamp, options);
@@ -232,7 +228,7 @@ describe("formatTimestamp() function", () => {
 
   //   const result = formatTimestamp(timestamp);
 
-  //   expect(result).toStrictEqual("Feb 1, 2024");
+  //   expect(result).toStrictEqual("Feb 1, 2024, 3:59 AM");
   // });
 
   // // TODO: build a more generic version of this unit test that works in any system default time zone.
@@ -244,7 +240,7 @@ describe("formatTimestamp() function", () => {
 
   //   const result = formatTimestamp(timestamp, options);
 
-  //   expect(result).toStrictEqual("Feb 1, 2024");
+  //   expect(result).toStrictEqual("Feb 1, 2024, 3:59 AM");
   // });
 
   it("invalid timezone", () => {
@@ -271,7 +267,7 @@ describe("formatTimestamp() function", () => {
     const date = new Date("2024-01-01T01:01:01Z");
     const timestamp = buildTimestampFromDate(date);
 
-    const result = formatTimestamp(timestamp, {showTime: true, timeZone: "UTC", locale: "ja-JP"});
+    const result = formatTimestamp(timestamp, {timeZone: "UTC", locale: "ja-JP"});
 
     expect(result).toStrictEqual("2024年1月1日 1:01");
   });

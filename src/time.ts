@@ -224,9 +224,9 @@ export interface FormatTimestampOptions {
 
   /**
    * Optional. Identifies if the output should show the date and time, or only date.
-   * If not provided, the output will only show the date.
+   * If not provided, the output will show the date and time.
    */
-  showTime?: boolean;
+  showDateOnly?: boolean;
 
   /**
    * Optional. The name of the time zone to use for the conversion.
@@ -258,15 +258,14 @@ const DEFAULT_LOCALE = "en-US";
  * @returns The formatted Timestamp.
  * @throws RangeError if options.timeZone is provided but is not a valid IANA time zone identifier.
  * @throws RangeError if options.locales is provided but is not a syntactically valid.
- * @example date only
-    const timestamp = buildTimestampFromDate(new Date("2024-01-01T01:01:01Z"));
-    formatTimestamp(timestamp);
-    // "Jan 1, 2024" (assuming the system time zone is UTC)
- * 
  * @example date and time
     const timestamp = buildTimestampFromDate(new Date("2024-01-01T01:01:01Z"));
-    formatTimestamp(timestamp, { showTime: true });
+    formatTimestamp(timestamp);
     // "Jan 1, 2024, 1:01 AM" (assuming the system time zone is UTC)
+ * @example date only
+    const timestamp = buildTimestampFromDate(new Date("2024-01-01T01:01:01Z"));
+    formatTimestamp(timestamp, { showDateOnly: true });
+    // "Jan 1, 2024" (assuming the system time zone is UTC)
  */
 export const formatTimestamp = (timestamp: Timestamp, options?: FormatTimestampOptions): string => {
 
@@ -280,21 +279,22 @@ export const formatTimestamp = (timestamp: Timestamp, options?: FormatTimestampO
   }
 
   let formatOptions: Intl.DateTimeFormatOptions;
-  if (!options || options.showTime === undefined || !options.showTime) {
-    // hide time by default
-    formatOptions = {
-      day: 'numeric',       // Single-digit day
-      month: 'short',       // Three-letter month
-      year: 'numeric',      // Four-digit year
-      timeZone: timeZone,
-    };
-  } else {
+  if (!options || options.showDateOnly === undefined || !options.showDateOnly) {
+    // show date and time by default
     formatOptions = {
       day: 'numeric',       // Single-digit day
       month: 'short',       // Three-letter month
       year: 'numeric',      // Four-digit year
       hour: 'numeric',      // Single-digit hour
       minute: 'numeric',    // Two-digit minute
+      timeZone: timeZone,
+    };
+  } else {
+    // show date only
+    formatOptions = {
+      day: 'numeric',       // Single-digit day
+      month: 'short',       // Three-letter month
+      year: 'numeric',      // Four-digit year
       timeZone: timeZone,
     };
   }
